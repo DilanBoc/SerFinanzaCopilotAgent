@@ -1,4 +1,4 @@
-import type { DetectedQuestion, StructuredAnswer, TranscriptLine } from "./types";
+import type { CustomerProfile, DetectedQuestion, StructuredAnswer, TranscriptLine } from "./types";
 
 export const advisor = {
   id: "adv_001",
@@ -27,6 +27,60 @@ export const customer = {
   simulatedScore: 742,
   simulatedEligibility: "Elegible para orientacion comercial, no aprobacion automatica",
 };
+
+export const customers: CustomerProfile[] = [
+  {
+    ...customer,
+    documentId: "1045678901",
+    lastInteraction: "Consulta de extracto por WhatsApp hace 12 dias",
+    recentRequests: ["Descarga de extracto", "Actualizacion de direccion", "Consulta sobre CDT"],
+    softInsights: [
+      "Cliente usa WhatsApp como canal preferido; conviene entregar pasos resumidos.",
+      "Tiene tarjeta activa y ha preguntado por CDT, oportunidad de orientacion sin recomendacion definitiva.",
+      "Si solicita cambio de ingresos, validar soporte antes de confirmar el tramite.",
+    ],
+  },
+  {
+    id: "cus_002",
+    documentId: "80200111",
+    name: "Maria Fernanda Lopez",
+    segment: "Persona natural - pensionada",
+    activeProducts: ["CliCuenta", "CDT"],
+    preferredChannel: "Oficina",
+    customerSince: "2021-09-08",
+    commercialPropensity: "Bajo interes en productos nuevos; alto interes en servicio",
+    riskAlerts: ["Prefiere atencion presencial para cambios de datos"],
+    simulatedScore: 701,
+    simulatedEligibility: "Elegible para orientacion de canales digitales, no venta proactiva",
+    lastInteraction: "Renovacion de CDT hace 28 dias",
+    recentRequests: ["Renovacion CDT", "Consulta de tasas", "Actualizacion de telefono"],
+    softInsights: [
+      "Priorizar claridad y confirmacion paso a paso.",
+      "Puede requerir apoyo para migrar consultas simples a canales digitales.",
+      "Evitar lenguaje tecnico sobre rentabilidad; ofrecer simulacion formal.",
+    ],
+  },
+  {
+    id: "cus_003",
+    documentId: "1098765432",
+    name: "Julian Torres",
+    segment: "Independiente",
+    activeProducts: ["Tarjeta de credito"],
+    preferredChannel: "App",
+    customerSince: "2023-01-19",
+    commercialPropensity: "Interes medio en financiacion y pagos digitales",
+    riskAlerts: ["Ingresos variables; cambios laborales requieren soporte"],
+    simulatedScore: 688,
+    simulatedEligibility: "Elegible para educacion financiera y orientacion de pagos",
+    lastInteraction: "Bloqueo de acceso app hace 5 dias",
+    recentRequests: ["Recuperacion de app", "Consulta pago minimo", "Actualizacion de ingresos"],
+    softInsights: [
+      "Tiene friccion reciente con app; verificar si puede operar por canal digital.",
+      "Si pregunta por ingresos, validar soportes para independiente.",
+      "Puede beneficiarse de guia de pagos y extractos.",
+    ],
+  },
+];
 
 export const transcript: TranscriptLine[] = [
   {

@@ -27,3 +27,20 @@ export type TranscriptLine = {
   speaker: "Cliente" | "Asesor";
   text: string;
 };
+
+export type CustomerProfile = {
+  id: string;
+  documentId: string;
+  name: string;
+  segment: string;
+  activeProducts: string[];
+  preferredChannel: string;
+  customerSince: string;
+  commercialPropensity: string;
+  riskAlerts: string[];
+  simulatedScore: number;
+  simulatedEligibility: string;
+  lastInteraction: string;
+  recentRequests: string[];
+  softInsights: string[];
+};

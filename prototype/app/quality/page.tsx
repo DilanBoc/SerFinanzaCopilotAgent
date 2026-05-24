@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { BarChart3, Filter, GraduationCap } from "lucide-react";
 import { Badge, Metric, Panel } from "@/components/ui";
+import { AuthShell } from "@/components/auth-shell";
 
 type Dashboard = {
   kpis: { detected: number; knows: number; support: number; escalations: number; gaps: number };
+  trend: { cdtWeeklyGrowth: number; topRisingTopic: string; mainTrainingNeed: string };
   byTopic: { topic: string; support: number; knows: number; gaps: number }[];
   byOffice: { office: string; support: number; gaps: number }[];
   advisorFocus: { advisor: string; office: string; recommendation: string };
@@ -20,9 +22,10 @@ export default function QualityPage() {
       .then(setData);
   }, []);
 
-  if (!data) return <p className="text-muted">Cargando dashboard...</p>;
+  if (!data) return <AuthShell><p className="text-muted">Cargando dashboard...</p></AuthShell>;
 
   return (
+    <AuthShell>
     <div className="space-y-5">
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -44,6 +47,24 @@ export default function QualityPage() {
         <Metric label="Escalamientos" value={data.kpis.escalations} />
         <Metric label="Brechas" value={data.kpis.gaps} />
       </section>
+
+      <Panel title="Insights de 30 dias">
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="rounded bg-surface p-4">
+            <p className="text-sm text-muted">Tema en crecimiento</p>
+            <p className="mt-2 font-semibold text-ink">{data.trend.topRisingTopic}</p>
+            <p className="mt-1 text-sm text-accent">+{data.trend.cdtWeeklyGrowth}% esta semana</p>
+          </div>
+          <div className="rounded bg-surface p-4">
+            <p className="text-sm text-muted">Necesidad de entrenamiento</p>
+            <p className="mt-2 font-semibold text-ink">{data.trend.mainTrainingNeed}</p>
+          </div>
+          <div className="rounded bg-surface p-4">
+            <p className="text-sm text-muted">Lectura recomendada</p>
+            <p className="mt-2 font-semibold text-ink">Priorizar sedes con mayor apoyo requerido</p>
+          </div>
+        </div>
+      </Panel>
 
       <section className="grid gap-4 lg:grid-cols-2">
         <Panel title="Temas con mayor apoyo requerido">
@@ -92,5 +113,6 @@ export default function QualityPage() {
         </div>
       </Panel>
     </div>
+    </AuthShell>
   );
 }

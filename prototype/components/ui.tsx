@@ -38,11 +38,13 @@ export function ActionButton({
   onClick,
   variant = "primary",
   disabled,
+  type = "button",
 }: {
   children: ReactNode;
   onClick?: () => void;
   variant?: "primary" | "secondary" | "danger";
   disabled?: boolean;
+  type?: "button" | "submit";
 }) {
   const variants = {
     primary: "bg-brand text-white hover:bg-blue-700",
@@ -51,7 +53,7 @@ export function ActionButton({
   };
   return (
     <button
-      type="button"
+      type={type}
       onClick={onClick}
       disabled={disabled}
       className={`focus-ring rounded px-3 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50 ${variants[variant]}`}

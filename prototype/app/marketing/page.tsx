@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { FileText, Send } from "lucide-react";
 import { ActionButton, Badge, Panel } from "@/components/ui";
+import { AuthShell } from "@/components/auth-shell";
 
 type Opportunity = {
   id: string;
@@ -36,6 +37,7 @@ export default function MarketingPage() {
   }
 
   return (
+    <AuthShell>
     <div className="space-y-5">
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -70,6 +72,11 @@ export default function MarketingPage() {
                   <span>Frecuencia: {item.frequency}</span>
                   <span>Impacto: {item.impact_score}</span>
                 </div>
+                <div className="mt-3 grid gap-2 text-xs text-muted md:grid-cols-3">
+                  <span className="rounded bg-surface px-2 py-1">Segmento: persona natural</span>
+                  <span className="rounded bg-surface px-2 py-1">Canal: oficina</span>
+                  <span className="rounded bg-surface px-2 py-1">Sede: Barranquilla Centro</span>
+                </div>
               </div>
             ))}
           </div>
@@ -89,5 +96,6 @@ export default function MarketingPage() {
         </Panel>
       </section>
     </div>
+    </AuthShell>
   );
 }

@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import { ClipboardList, RefreshCw } from "lucide-react";
 import { ActionButton, Badge, Panel } from "@/components/ui";
+import { AuthShell } from "@/components/auth-shell";
 
 type Gap = {
   id: string;
   status: string;
   topic: string;
   intent: string;
+  office_id: string;
   question_text: string;
   source_ids: string | null;
   created_at: string;
@@ -16,6 +18,9 @@ type Gap = {
 
 export default function AdminPage() {
   const [gaps, setGaps] = useState<Gap[]>([]);
+  const [statusFilter, setStatusFilter] = useState("todos");
+  const [topicFilter, setTopicFilter] = useState("todos");
+  const [officeFilter, setOfficeFilter] = useState("todos");
 
   async function load() {
     const response = await fetch("/api/gaps");
@@ -36,7 +41,17 @@ export default function AdminPage() {
     await load();
   }
 
+  const filtered = gaps.filter((gap) => {
+    const matchesStatus = statusFilter === "todos" || gap.status === statusFilter;
+    const matchesTopic = topicFilter === "todos" || gap.topic === topicFilter;
+    const matchesOffice = officeFilter === "todos" || gap.office_id === officeFilter;
+    return matchesStatus && matchesTopic && matchesOffice;
+  });
+
+  const topics = Array.from(new Set(gaps.map((gap) => gap.topic)));
+
   return (
+    <AuthShell>
     <div className="space-y-5">
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -54,8 +69,42 @@ export default function AdminPage() {
       </div>
 
       <Panel title="Brechas pendientes">
+        <div className="mb-4 grid gap-3 md:grid-cols-4">
+          <label className="text-sm font-medium text-ink">
+            Estado
+            <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="mt-1 w-full rounded border border-line px-3 py-2 text-sm">
+              <option value="todos">Todos</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="en_revision">En revision</option>
+              <option value="resuelta">Resuelta</option>
+            </select>
+          </label>
+          <label className="text-sm font-medium text-ink">
+            Tema
+            <select value={topicFilter} onChange={(event) => setTopicFilter(event.target.value)} className="mt-1 w-full rounded border border-line px-3 py-2 text-sm">
+              <option value="todos">Todos</option>
+              {topics.map((topic) => <option key={topic} value={topic}>{topic}</option>)}
+            </select>
+          </label>
+          <label className="text-sm font-medium text-ink">
+            Sede
+            <select value={officeFilter} onChange={(event) => setOfficeFilter(event.target.value)} className="mt-1 w-full rounded border border-line px-3 py-2 text-sm">
+              <option value="todos">Todas</option>
+              <option value="off_001">Barranquilla Centro</option>
+              <option value="off_002">Bogota Norte</option>
+              <option value="off_003">Cartagena Bocagrande</option>
+            </select>
+          </label>
+          <label className="text-sm font-medium text-ink">
+            Prioridad
+            <select className="mt-1 w-full rounded border border-line px-3 py-2 text-sm" defaultValue="frecuencia">
+              <option value="frecuencia">Por frecuencia</option>
+              <option value="reciente">Mas recientes</option>
+            </select>
+          </label>
+        </div>
         <div className="space-y-3">
-          {gaps.length === 0 ? (
+          {filtered.length === 0 ? (
             <div className="flex min-h-[240px] items-center justify-center rounded border border-dashed border-line text-center text-muted">
               <div>
                 <ClipboardList className="mx-auto mb-3" size={26} />
@@ -63,7 +112,7 @@ export default function AdminPage() {
               </div>
             </div>
           ) : (
-            gaps.map((gap) => (
+            filtered.map((gap) => (
               <div key={gap.id} className="rounded border border-line p-4">
                 <div className="flex items-start justify-between gap-4">
                   <div>
@@ -78,14 +127,19 @@ export default function AdminPage() {
                       Accion sugerida: validar fuente y reforzar entrenamiento antes de cerrar la brecha.
                     </p>
                   </div>
-                  <div className="flex min-w-40 flex-col gap-2">
-                    <ActionButton onClick={() => update(gap.id, "pendiente")} variant="secondary">
-                      Pendiente
-                    </ActionButton>
-                    <ActionButton onClick={() => update(gap.id, "en_revision")} variant="secondary">
-                      En revision
-                    </ActionButton>
-                    <ActionButton onClick={() => update(gap.id, "resuelta")}>Resuelta</ActionButton>
+                  <div className="min-w-44">
+                    <label className="text-xs font-medium text-muted">
+                      Cambiar estado
+                      <select
+                        value={gap.status}
+                        onChange={(event) => update(gap.id, event.target.value)}
+                        className="mt-1 w-full rounded border border-line bg-white px-3 py-2 text-sm text-ink"
+                      >
+                        <option value="pendiente">Pendiente</option>
+                        <option value="en_revision">En revision</option>
+                        <option value="resuelta">Resuelta</option>
+                      </select>
+                    </label>
                   </div>
                 </div>
               </div>
@@ -94,5 +148,6 @@ export default function AdminPage() {
         </div>
       </Panel>
     </div>
+    </AuthShell>
   );
 }
