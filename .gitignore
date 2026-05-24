@@ -1,0 +1,14 @@
+node_modules/
+.next/
+*.log
+*.tsbuildinfo
+
+prototype/node_modules/
+prototype/.next/
+prototype/data/*.sqlite
+prototype/generated/reports/*.md
+
+.env
+.env.local
+prototype/.env
+prototype/.env.local

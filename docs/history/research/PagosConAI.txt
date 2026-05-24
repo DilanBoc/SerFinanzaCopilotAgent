@@ -1,0 +1,86 @@
+El pago ya no lo haces tú. Lo hace tu agente. ¿Tu banco está listo?
+Ramon Heredia
+Ramon Heredia
+Speaker Internacional · Creador de la metodología Espacios Vacíos · Fintech & Innovación en Latam · Autor de 5 libros · CEO Digital Bank Latam
+
+
+3 de mayo de 2026
+# El Banco que Aprende a Obedecer a los Agentes
+Esta semana Visa anunció la expansión de su programa Agentic Ready a América Latina y el Caribe. Bancolombia, BBVA, Banco do Brasil, Banco Macro y Scotiabank ya están dentro. El programa es simple de explicar y enorme de entender: permite que agentes de inteligencia artificial inicien, autentiquen y completen pagos en nombre de los consumidores, sin que ningún humano toque una pantalla. 85 instituciones financieras en Asia Pacífico y Latinoamérica sumadas en una sola semana.
+
+¿Te parece lejano? Santander y Mastercard ya lo demostraron en Europa en marzo de este año. El primer pago end-to-end ejecutado por un agente de IA dentro de un entorno bancario regulado. Sin intervención humana. El agente inició la transacción, la procesó y la completó solo.
+
+Ahora el turno es nuestro.
+
+---
+
+## La tesis que incomoda
+Los bancos que no preparen sus APIs para recibir instrucciones de agentes de inteligencia artificial van a quedar fuera de una parte creciente del tráfico financiero global. No en cinco años. Ahora.
+
+No es una exageración. Es la dirección en que el dinero ya está moviéndose.
+
+El problema no es tecnológico. El problema es mental. Hay una industria entera que todavía cree que la IA es una herramienta de productividad interna, como un Excel más inteligente. Y no lo entiende: la IA ya no solo trabaja para ti adentro del banco. Ahora toca la puerta desde afuera y dice: "dame acceso para pagar en nombre de mi usuario." El banco que no sepa cómo responder a esa solicitud va a perder el cliente antes de que se dé cuenta.
+
+---
+
+## Una reflexión que se repite
+Cuando escribí El Dinero Cuántico a principios de este año, dediqué un capítulo completo a los agentes financieros autónomos. Escribí esto, textual, sobre el momento en que me enteré del pago de Santander y Mastercard:
+
+> "Me quedé mirando esa noticia unos segundos más de lo normal. No porque me sorprendiera —llevaba años viendo cómo se aproximaba este momento— sino porque me di cuenta de que ese día cruzamos una línea que no tiene regreso."
+
+Y también escribí algo que hoy, con Visa Agentic Ready en LATAM, cobra otra dimensión:
+
+> "Los bancos que no preparen su infraestructura tecnológica para recibir instrucciones de agentes de IA autorizados van a quedar excluidos de una parte creciente del tráfico financiero global."
+
+No lo escribí como predicción. Lo escribí porque ya estaba pasando. Lo que esta semana nos dice es que la ola llegó a la orilla nuestra.
+
+---
+
+## La historia real
+Tengo un amigo que dirige el área financiera de una empresa mediana en Bogotá. Se llama Andrés. Durante años su rutina de los viernes por la tarde fue siempre la misma: revisar las cuentas por cobrar, calcular qué facturas podía pagar sin comprometer el flujo de caja, llamar al banco para gestionar alguna línea de crédito si el cuadre no daba, y preparar el reporte para la junta del lunes. Tres o cuatro horas que consumían sus viernes.
+
+Me llamó hace unos meses para decirme que ya no hace eso. No porque contrató más gente. Porque tiene un agente.
+
+El agente monitorea las cuentas por cobrar en tiempo real, proyecta el flujo de caja con cinco semanas de anticipación, detecta cuándo va a haber una brecha de liquidez e identifica las facturas elegibles para factoring antes de que Andrés se haya tomado el primer café del día. El reporte del lunes lo genera solo, a las seis de la mañana. Andrés recuperó sus viernes.
+
+Ahora imagina que el agente de Andrés puede también, con los parámetros que él definió previamente, ejecutar directamente el pago al proveedor más crítico, factorizar la factura más urgente y hacer la transferencia desde la cuenta correcta, todo sin que nadie confirme nada. Eso es exactamente lo que Visa Agentic Ready habilita.
+
+¿El banco de Andrés está listo para recibir esa instrucción? Esa es la pregunta que todos los bancos latinoamericanos deberían estar respondiendo esta semana.
+
+---
+
+## La Caja de Espacios Vacíos
+Cada vez que analizo un tema nuevo, lo paso por los seis ingredientes de mi metodología. Y cuando lo hago con el tema de los agentes financieros, aparece un concepto que desarrollé en Ecosistemas Digitales —mi segundo libro— y que sigue siendo la pregunta central de cualquier innovación: ¿dónde viven las personas? No dónde deberían vivir, no dónde quisieras que estuvieran. Dónde están de verdad. A eso le llamo Plazas Digitales, y es el ingrediente que más se subestima cuando se habla de estrategia financiera. Aquí está el mapa de la oportunidad:
+
+Activos: Millones de usuarios bancarios en LATAM con apps instaladas, con historial transaccional, con confianza depositada en su institución financiera. Redes de pago ya construidas (Pix en Brasil, PSE en Colombia, CoDi en México). APIs que muchos bancos ya tienen pero que no fueron diseñadas para hablarle a agentes.
+
+Espacio Vacío: El gap entre la infraestructura de pago que ya existe y la nueva capa de identidad, consentimiento y autorización que los agentes necesitan para operar. Los rieles están, el puente no.
+
+Cluster: Directores financieros de PYMEs latinoamericanas que gestionan flujo de caja manualmente. Tesoreros de empresas medianas que dedican horas semanales a tareas que un agente puede hacer en minutos. Freelancers y emprendedores digitales que operan en múltiples monedas y necesitan que alguien gestione su dinero mientras ellos trabajan. En América Latina hay más de 25 millones de PYMEs formales. Casi ninguna tiene acceso a servicios de tesorería sofisticada.
+
+Dolores: El CFO que llega el lunes sin saber exactamente cuál es su posición de caja. La empresa que paga intereses por no haber factorizado a tiempo porque nadie tuvo tiempo de revisar las opciones. El freelancer que pierde en conversión de moneda porque no optimiza el momento del cambio. Dolores reales, cotidianos, medibles en dinero.
+
+Plaza Digital: Aquí es donde quiero detenerme, porque creo que esta semana también llegó una noticia que parece de otro mundo pero que conecta directo con este tema.
+
+Ralph Lauren, Olaplex, Ulta Beauty, Crocs, Revolve y L'Oréal están abriendo tiendas en TikTok Shop. No porque TikTok sea una red social de moda. Sino porque, como lo dijo Olivia Tong, directora general de Raymond James: "Hay que estar donde está el consumidor, y cada vez más, obviamente, eso es en las redes sociales y en línea."
+
+Eso no es una noticia de retail. Es una confirmación de algo que escribí en mi segundo libro, Ecosistemas Digitales: las Plazas Digitales son los lugares donde las personas ya viven, y cualquier negocio que no esté ahí está compitiendo con una mano amarrada. TikTok Shop es hoy una Plaza Digital de primer orden. Millones de personas no van a TikTok a comprar — van a entretenerse, y de paso compran. Esa es la diferencia: el comercio va a encontrar al consumidor donde él ya está, no al revés.
+
+¿Y qué tiene que ver esto con los agentes de IA y los pagos?
+Todo.
+
+Porque si el consumidor latinoamericano va a estar comprando en TikTok Shop, en Instagram Shopping, en Mercado Libre, en WhatsApp, en la app de su neobanco favorito — el agente financiero que lo sirva tiene que poder operar en todas esas plazas al mismo tiempo. El pago no ocurre en el banco. Ocurre en la Plaza Digital donde el consumidor está viviendo. Y el banco que quiera capturar ese flujo necesita tener un agente que pueda autenticarse, operar y completar una transacción dentro del ecosistema donde el dinero se mueve.
+
+WhatsApp ya tiene más de 100 millones de usuarios activos en Brasil. Nubank tiene 131 millones de clientes en LATAM. Ualá opera en tres países con once millones de clientes y acaba de cerrar una ronda de 195 millones de dólares. Esas son las Plazas Digitales reales de la clase media latinoamericana. Esas son las plataformas donde el agente financiero tiene que estar — no esperando a que el cliente abra la app del banco.
+
+Startup / Solución: Xepelin en Chile ya automatiza capital de trabajo para PYMEs con datos transaccionales. Roma AI gestiona agendas con agentes conversacionales. Global66 ya resuelve el 85% de las interacciones de clientes con agentes autónomos. El ecosistema existe. Lo que falta es que los bancos abran la puerta.
+
+---
+
+## La pregunta que importa
+Aquel ejecutivo de pelo blanco que se me acercó después de una conferencia me dijo: "Ramón, con la IA siento algo que no había sentido antes: que el tren ya salió, yo todavía estoy en el andén y no tengo ganas de subirme."
+
+Lo entendí. Pero hay algo que ese ejecutivo no había pensado: el tren no solo ya salió. Ahora el tren puede comprar su propio pasaje, reservar el asiento y pagar el taxi del otro lado, sin que nadie lo llame.
+
+¿Cuántos bancos en tu país están en el programa Visa Agentic Ready? ¿El tuyo está?
+Y tú, ¿ya sabes cuáles son los parámetros que le vas a definir a tu agente financiero, o todavía estás esperando a que alguien te explique para qué sirve?

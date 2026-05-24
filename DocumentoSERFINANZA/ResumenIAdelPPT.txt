@@ -1,0 +1,41 @@
+Resumen del Desafío "Agente 360"
+
+El objetivo central o "La Misión" del reto es lograr que el conocimiento del banco llegue de manera instantánea, precisa, contextual y accionable a quien lo necesite, independientemente del canal que esté utilizando. La filosofía subyacente es que la Inteligencia Artificial no está destinada a reemplazar personas, sino a multiplicar sus capacidades dentro de Banco Serfinanza.1
+
+Análisis Detallado de las Necesidades (El Dolor)
+
+El principal problema identificado es que "El conocimiento del banco no llega a tiempo a quien lo necesita". Esto genera un conjunto de consecuencias negativas que definen las necesidades a resolver:1
+Tiempos de espera y Frustración: El cliente experimenta frustración en canales como oficinas, WhatsApp y Call Center debido a los tiempos prolongados de espera.1
+Inconsistencia y Calidad de Atención: La calidad del servicio es dispar y variable, dependiendo del canal o del asesor que atienda al cliente.1
+Alta Rotación y Costos: La constante rotación de personal implica costos elevados debido al re-entrenamiento continuo de los empleados.1
+Baja Personalización: La atención es generalista y carece de un enfoque específico en el perfil particular de cada cliente.1
+Acceso Limitado a la Información: Los asesores ofrecen respuestas desactualizadas o tienen dificultades para acceder a la información correcta.1
+Curva de Aprendizaje: El personal enfrenta dificultades para memorizar los procesos internos y las líneas de producto del banco.1
+Consideraciones de Trabajo para el Desarrollo
+
+El desarrollo del reto debe enfocarse en lograr un "IMPACTO DUAL GARANTIZADO" y cumplir con las siguientes especificaciones:1
+
+1. Stack Tecnológico:
+FrontEnd: Angular1
+BackEnd: .NET1
+Plataforma IA: COPILOT STUDIO1
+Nota: Se anima a los equipos a combinar varias herramientas, pero la prioridad es resolver el problema de fondo.1
+2. Impacto y Resultados Esperados (Outcomes):
+
+La solución no debe medirse por sus funcionalidades (features), sino por los resultados (outcomes) generados.1
+Para el Empleado:
+Acelerar el proceso de onboarding para nuevas contrataciones.1
+Reducir drásticamente el tiempo dedicado a la búsqueda de datos.1
+Disminuir los errores humanos en la gestión operativa.1
+Permitir que un asesor nuevo provea respuestas correctas desde el primer día.1
+Para el Cliente:
+Eliminar los tiempos de espera a través de un auto-servicio avanzado.1
+Ofrecer soluciones inmediatas mediante automatización inteligente.1
+Asegurar la resolución efectiva de requerimientos en el primer contacto, evitando saltos entre canales.1
+Garantizar atención consistente, empática y personalizada 24 horas al día.1
+3. Casos Ejemplo a Resolver:
+
+La solución debe ser capaz de manejar consultas de ejemplo en diversas categorías:1
+Banca/Herramientas: Preguntas operativas como "¿Cómo ingresar a Serfinanza Virtual Personas?".1
+Facturación/Radicación: Procesos como la radicación de plan de ahorro débito automático o la generación y lectura del extracto mensual.1
+Asesoramiento/Portafolio: Consultas sobre productos y servicios, como "¿Qué beneficios tiene un SuperCDT?" o "¿Por qué canal puedo hacer mi actualización de datos?".1
