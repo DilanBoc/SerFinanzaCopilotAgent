@@ -5,6 +5,7 @@ node_modules/
 __pycache__/
 *.pyc
 .venv/
+voice-agent/models/faster-whisper-*/
 
 prototype/node_modules/
 prototype/.next/

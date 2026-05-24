@@ -16,6 +16,8 @@ Usar `tiny` como modelo STT local por defecto en `voice-agent/main.py`.
 
 Mantener la variable `WHISPER_MODEL_SIZE` para permitir experimentos manuales con `small` o `medium`, sin hacerlos dependencia de la demo.
 
+Actualizacion 2026-05-24: se descargaron y validaron modelos locales `base` y `small` en formato `faster-whisper`. El servicio puede resolverlos desde `voice-agent/models/`, pero el default sigue siendo `tiny`.
+
 ## Consecuencias
 
 Positivas:

@@ -6,6 +6,7 @@ import queue
 import threading
 import time
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Set
 
 import numpy as np
@@ -22,6 +23,7 @@ MODEL_DEVICE = os.getenv("WHISPER_DEVICE", "cpu")
 COMPUTE_TYPE = os.getenv("WHISPER_COMPUTE_TYPE", "int8")
 HOST = os.getenv("VOICE_AGENT_HOST", "127.0.0.1")
 PORT = int(os.getenv("VOICE_AGENT_PORT", "8765"))
+MODEL_DIR = Path(__file__).resolve().parent / "models"
 
 
 @dataclass
@@ -87,7 +89,7 @@ async def broadcast_loop() -> None:
 @app.on_event("startup")
 async def startup() -> None:
     global model
-    model = WhisperModel(MODEL_SIZE, device=MODEL_DEVICE, compute_type=COMPUTE_TYPE)
+    model = WhisperModel(resolve_model_path(MODEL_SIZE), device=MODEL_DEVICE, compute_type=COMPUTE_TYPE)
     threading.Thread(target=capture_microphone, daemon=True).start()
     threading.Thread(target=transcription_worker, daemon=True).start()
     asyncio.create_task(broadcast_loop())
@@ -116,6 +118,13 @@ def capture_microphone() -> None:
     ):
         while not stop_event.is_set():
             time.sleep(0.25)
+
+
+def resolve_model_path(model_size: str) -> str:
+    local_model = MODEL_DIR / f"faster-whisper-{model_size}"
+    if local_model.exists():
+        return str(local_model)
+    return model_size
 
 
 def transcription_worker() -> None:

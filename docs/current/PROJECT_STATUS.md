@@ -27,7 +27,8 @@ Decision vigente:
 
 - Modelo por defecto: `tiny`.
 - Motivo: fue el unico modelo validado estable en esta maquina.
-- `small` y `medium` quedan como experimentos futuros porque la descarga/cache de Hugging Face se bloqueo.
+- `base` y `small` ya pueden cargarse si existen como modelos locales en `voice-agent/models/`.
+- `medium` queda como experimento futuro porque fue demasiado pesado y fallo por cache incompleto.
 - No se guarda audio.
 - Solo se envia texto transcrito al frontend.
 
