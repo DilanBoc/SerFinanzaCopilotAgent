@@ -22,7 +22,7 @@ Microfono local
 
 - No se guarda audio.
 - Solo se envia texto transcrito al frontend.
-- El modelo por defecto es `small` en CPU con `int8`.
+- El modelo por defecto es `tiny` en CPU con `int8`.
 - La deteccion de consulta se hace en la app con reglas conservadoras.
 - El frontend conserva el boton `Siguiente frase` para modo simulado.
 
@@ -63,5 +63,5 @@ Invoke-WebRequest http://127.0.0.1:8765/health
 - En CPU puede haber latencia.
 - Windows puede requerir permisos o drivers de microfono.
 - La primera ejecucion puede tardar por descarga del modelo.
-- Si `small` resulta lento para la demo, arrancar con `$env:WHISPER_MODEL_SIZE='tiny'`.
+- Si se quiere experimentar con mayor precision, arrancar con `$env:WHISPER_MODEL_SIZE='small'`.
 - El ruido ambiente puede afectar la transcripcion.

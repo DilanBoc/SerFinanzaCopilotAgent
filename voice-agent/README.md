@@ -34,10 +34,10 @@ cd voice-agent
 python main.py
 ```
 
-El modelo por defecto es `small` porque ofrece mejor balance entre precision y latencia para una demo local en CPU. Si necesitas maxima velocidad, puedes arrancar con:
+El modelo por defecto es `tiny` porque ya fue validado en la demo local y ofrece la menor latencia en CPU. Si necesitas probar mejor reconocimiento y la maquina lo soporta, puedes arrancar con:
 
 ```powershell
-$env:WHISPER_MODEL_SIZE='tiny'
+$env:WHISPER_MODEL_SIZE='small'
 python main.py
 ```
 
@@ -55,5 +55,5 @@ Luego entra al puesto del asesor, inicia jornada, identifica un cliente, inicia 
 - El audio no se guarda.
 - Solo se emiten transcripciones al frontend.
 - El primer arranque puede tardar porque `faster-whisper` descarga el modelo.
-- `medium` reconoce mejor que `tiny` o `small`, pero puede ser demasiado pesado en CPU para esta demo.
+- `small` y `medium` pueden reconocer mejor, pero requieren descargar modelos mas pesados y pueden ser inestables en esta maquina/red.
 - Si el microfono falla, usa el modo simulado del frontend.
