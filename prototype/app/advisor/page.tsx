@@ -124,6 +124,17 @@ export default function AdvisorPage() {
     setNotice("Atencion iniciada. Copiloto escuchando.");
   }
 
+  function finishAttention() {
+    setAttention(selectedCustomer ? "customer_loaded" : "idle");
+    setSessionId("");
+    setLineCount(0);
+    setLiveLines([]);
+    setAnswer(null);
+    setActiveQuestion(null);
+    setVoiceStatus("idle");
+    setNotice("Atencion finalizada. Puedes iniciar una nueva atencion para el cliente cargado.");
+  }
+
   function advanceConversation() {
     if (!copilotActive || transcriptMode !== "simulated") return;
     const nextCount = Math.min(lineCount + 1, transcript.length);
@@ -289,7 +300,7 @@ export default function AdvisorPage() {
                 </Badge>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <ActionButton onClick={() => { setWorkday("active"); setNotice("Jornada iniciada."); }}>
+                <ActionButton onClick={() => { setWorkday("active"); setNotice("Jornada iniciada."); }} disabled={workday !== "off"}>
                   <span className="flex items-center gap-2"><Play size={15} /> Iniciar</span>
                 </ActionButton>
                 <ActionButton onClick={() => { setWorkday(workday === "paused" ? "active" : "paused"); setNotice(workday === "paused" ? "Copiloto reanudado." : "Copiloto pausado."); }} variant="secondary" disabled={workday === "off"}>
@@ -329,9 +340,14 @@ export default function AdvisorPage() {
                   <p className="text-muted">Productos: {selectedCustomer.activeProducts.join(", ")}</p>
                 </div>
               ) : null}
-              <ActionButton onClick={startAttention} disabled={workday !== "active" || attention !== "customer_loaded"}>
-                Iniciar atencion
-              </ActionButton>
+              <div className="grid grid-cols-2 gap-2">
+                <ActionButton onClick={startAttention} disabled={workday !== "active" || attention !== "customer_loaded"}>
+                  Iniciar atencion
+                </ActionButton>
+                <ActionButton onClick={finishAttention} disabled={attention !== "in_attention"} variant="secondary">
+                  Finalizar atencion
+                </ActionButton>
+              </div>
             </div>
           </Panel>
 
