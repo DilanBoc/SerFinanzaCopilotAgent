@@ -8,6 +8,7 @@ import {
   Eye,
   Flag,
   Mic,
+  Radio,
   Pause,
   Play,
   Search,
@@ -16,11 +17,16 @@ import {
 } from "lucide-react";
 import { AuthShell } from "@/components/auth-shell";
 import { ActionButton, Badge, Panel } from "@/components/ui";
+import { detectConsultation } from "@/lib/consultation-detector";
 import { advisor, detectedQuestions, office, transcript } from "@/lib/demo-data";
 import type { CustomerProfile, DetectedQuestion, StructuredAnswer, TranscriptLine } from "@/lib/types";
 
 type WorkdayState = "off" | "active" | "paused";
 type AttentionState = "idle" | "customer_loaded" | "in_attention";
+type TranscriptMode = "simulated" | "microphone";
+type VoiceStatus = "idle" | "connecting" | "connected" | "error";
+
+const VOICE_AGENT_URL = "ws://localhost:8765/ws/transcript";
 
 export default function AdvisorPage() {
   const [workday, setWorkday] = useState<WorkdayState>("off");
@@ -30,11 +36,17 @@ export default function AdvisorPage() {
   const [customerError, setCustomerError] = useState("");
   const [sessionId, setSessionId] = useState<string>("");
   const [lineCount, setLineCount] = useState(0);
+  const [liveLines, setLiveLines] = useState<TranscriptLine[]>([]);
+  const [transcriptMode, setTranscriptMode] = useState<TranscriptMode>("simulated");
+  const [voiceStatus, setVoiceStatus] = useState<VoiceStatus>("idle");
   const [activeQuestion, setActiveQuestion] = useState<DetectedQuestion | null>(null);
   const [answer, setAnswer] = useState<StructuredAnswer | null>(null);
   const [notice, setNotice] = useState("Inicia jornada para activar el puesto.");
 
-  const visibleLines = useMemo(() => transcript.slice(0, lineCount), [lineCount]);
+  const visibleLines = useMemo(
+    () => transcriptMode === "simulated" ? transcript.slice(0, lineCount) : liveLines,
+    [lineCount, liveLines, transcriptMode],
+  );
   const copilotActive = workday === "active" && attention === "in_attention";
 
   useEffect(() => {
@@ -47,6 +59,42 @@ export default function AdvisorPage() {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   });
+
+  useEffect(() => {
+    if (!copilotActive || transcriptMode !== "microphone") {
+      setVoiceStatus("idle");
+      return;
+    }
+
+    setVoiceStatus("connecting");
+    const socket = new WebSocket(VOICE_AGENT_URL);
+
+    socket.onopen = () => {
+      setVoiceStatus("connected");
+      setNotice("Servicio de voz conectado. Habla frente al microfono local.");
+    };
+
+    socket.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        if (message.type !== "transcript" || typeof message.text !== "string") return;
+        ingestLiveTranscript(message.text);
+      } catch {
+        setNotice("Se recibio una transcripcion con formato no valido.");
+      }
+    };
+
+    socket.onerror = () => {
+      setVoiceStatus("error");
+      setNotice("No se pudo conectar con el servicio local de voz. Puedes usar modo simulado.");
+    };
+
+    socket.onclose = () => {
+      setVoiceStatus((current) => current === "connected" ? "idle" : current);
+    };
+
+    return () => socket.close();
+  }, [copilotActive, transcriptMode, sessionId]);
 
   async function searchCustomer() {
     setCustomerError("");
@@ -70,13 +118,14 @@ export default function AdvisorPage() {
     setSessionId(data.sessionId);
     setAttention("in_attention");
     setLineCount(0);
+    setLiveLines([]);
     setAnswer(null);
     setActiveQuestion(null);
     setNotice("Atencion iniciada. Copiloto escuchando.");
   }
 
   function advanceConversation() {
-    if (!copilotActive) return;
+    if (!copilotActive || transcriptMode !== "simulated") return;
     const nextCount = Math.min(lineCount + 1, transcript.length);
     setLineCount(nextCount);
     setAnswer(null);
@@ -96,6 +145,37 @@ export default function AdvisorPage() {
         }),
       });
     }
+  }
+
+  function ingestLiveTranscript(text: string) {
+    const cleanText = text.trim();
+    if (!cleanText) return;
+
+    setAnswer(null);
+    setLiveLines((currentLines) => {
+      const nextLines = [...currentLines, { speaker: "Cliente", text: cleanText } satisfies TranscriptLine];
+      const detected = detectConsultation(cleanText, nextLines.length - 1);
+      setActiveQuestion(detected);
+
+      if (detected && sessionId) {
+        setNotice(`Pregunta detectada por voz: ${detected.topic}`);
+        fetch("/api/events", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId,
+            eventType: "QUESTION_DETECTED",
+            intent: detected.intent,
+            confidence: detected.confidence,
+            payload: { ...detected, trigger: detected.fragment, source: "local-whisper" },
+          }),
+        });
+      } else {
+        setNotice("Transcripcion recibida sin consulta accionable.");
+      }
+
+      return nextLines;
+    });
   }
 
   async function closeCard() {
@@ -278,13 +358,46 @@ export default function AdvisorPage() {
 
         <section className="space-y-4">
           <Panel
-            title="Transcripcion en vivo simulada"
+            title={transcriptMode === "simulated" ? "Transcripcion en vivo simulada" : "Transcripcion por microfono local"}
             action={
               <Badge tone={copilotActive ? "success" : "neutral"}>
                 <Mic size={13} /> {copilotActive ? "Escuchando" : "Inactivo"}
               </Badge>
             }
           >
+            <div className="mb-4 grid gap-3 border-b border-line pb-4 md:grid-cols-[1fr_auto]">
+              <div className="flex flex-wrap gap-2">
+                <ActionButton
+                  onClick={() => {
+                    setTranscriptMode("simulated");
+                    setNotice("Modo simulado activo.");
+                  }}
+                  variant={transcriptMode === "simulated" ? "primary" : "secondary"}
+                >
+                  Simulado
+                </ActionButton>
+                <ActionButton
+                  onClick={() => {
+                    setTranscriptMode("microphone");
+                    setNotice("Modo microfono local activo. Inicia el servicio Python para conectar.");
+                  }}
+                  variant={transcriptMode === "microphone" ? "primary" : "secondary"}
+                >
+                  <span className="flex items-center gap-2"><Radio size={15} /> Microfono local</span>
+                </ActionButton>
+              </div>
+              <Badge tone={voiceStatus === "connected" ? "success" : voiceStatus === "error" ? "danger" : "neutral"}>
+                {transcriptMode === "simulated"
+                  ? "Demo controlada"
+                  : voiceStatus === "connected"
+                    ? "Voz conectada"
+                    : voiceStatus === "connecting"
+                      ? "Conectando voz"
+                      : voiceStatus === "error"
+                        ? "Voz desconectada"
+                        : "Voz inactiva"}
+              </Badge>
+            </div>
             <div className="min-h-[560px] space-y-3">
               {visibleLines.map((line: TranscriptLine, index) => (
                 <div key={`${line.speaker}-${index}`} className="rounded border border-line bg-surface p-3">
@@ -294,13 +407,17 @@ export default function AdvisorPage() {
               ))}
               {visibleLines.length === 0 ? (
                 <div className="flex min-h-[460px] items-center justify-center rounded border border-dashed border-line text-center text-muted">
-                  {copilotActive ? "Presiona espacio o usa Siguiente frase para avanzar la conversacion." : "Inicia jornada, identifica cliente e inicia atencion para activar el copiloto."}
+                  {copilotActive
+                    ? transcriptMode === "simulated"
+                      ? "Presiona espacio o usa Siguiente frase para avanzar la conversacion."
+                      : "Inicia el servicio Python de voz y habla frente al microfono."
+                    : "Inicia jornada, identifica cliente e inicia atencion para activar el copiloto."}
                 </div>
               ) : null}
             </div>
             <div className="mt-4 flex items-center justify-between gap-3 border-t border-line pt-4">
               <p className="text-sm text-muted">{notice}</p>
-              <ActionButton onClick={advanceConversation} disabled={!copilotActive || lineCount >= transcript.length} variant="secondary">
+              <ActionButton onClick={advanceConversation} disabled={!copilotActive || transcriptMode !== "simulated" || lineCount >= transcript.length} variant="secondary">
                 Siguiente frase
               </ActionButton>
             </div>

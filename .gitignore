@@ -2,6 +2,9 @@ node_modules/
 .next/
 *.log
 *.tsbuildinfo
+__pycache__/
+*.pyc
+.venv/
 
 prototype/node_modules/
 prototype/.next/
