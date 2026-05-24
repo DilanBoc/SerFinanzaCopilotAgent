@@ -4,6 +4,8 @@ Duracion objetivo: 4 a 5 minutos
 Formato: demo guiada con narrativa de producto  
 Objetivo: demostrar que la atencion presencial puede convertirse en inteligencia accionable para asesores, calidad y marketing.
 
+> Nota de vigencia 2026-05-24: la demo estable debe ejecutarse en modo `Simulado`. El modo `Microfono local` con Whisper `tiny` es un extra experimental validado, pero no debe ser la unica ruta de presentacion. Los botones actuales son `Ver asistencia`, `Cerrar`, `Resuelto`, `Escalar` y `Brecha`.
+
 ## 1. Mensaje Central
 
 Serfinanza Action Hub no es otro chatbot bancario. Es un copiloto contextual para asesores de oficina que escucha una conversacion presencial con aviso visible, detecta preguntas bancarias, ofrece apoyo estructurado cuando el asesor lo necesita y convierte cada interaccion en datos utiles para entrenamiento, supervision y contenido.
@@ -33,7 +35,8 @@ Estado inicial:
 
 - Microfono: `Escuchando`
 - Consentimiento: `Informado por aviso de atencion`
-- Modo demo: `Transcripcion simulada`
+- Modo demo recomendado: `Simulado`
+- Modo experimental opcional: `Microfono local`
 
 ## 3. Escena 1 - Apertura: Atencion Presencial
 
@@ -77,10 +80,8 @@ El sistema detecta pregunta:
 
 Debe aparecer tarjeta con botones:
 
-- `Lo se`
-- `Ver respuesta`
-- `Escalar`
-- `Ignorar`
+- `Ver asistencia`
+- `Cerrar`
 
 ## 4. Escena 2 - Asesor Pide Apoyo
 
@@ -90,7 +91,7 @@ Debe aparecer tarjeta con botones:
 
 ### Accion En Pantalla
 
-Click en `Ver respuesta`.
+Click en `Ver asistencia`.
 
 ### Respuesta Estructurada Esperada
 
@@ -127,21 +128,22 @@ Siguiente mejor accion:
 
 Acciones visibles:
 
-- `Marcar resuelto`
-- `Reportar brecha`
+- `Resuelto`
+- `Escalar`
+- `Brecha`
 
 ### Accion En Pantalla
 
-Click en `Marcar resuelto`.
+Click en `Resuelto`.
 
 ### Evento Esperado
 
 Registrar:
 
-- evento `Ver respuesta`;
+- evento `Ver asistencia`;
 - respuesta mostrada;
 - fuente usada;
-- evento `Marcar resuelto`;
+- evento `Resuelto`;
 - tema `Actualizacion de datos`;
 - asesor `Laura Martinez`;
 - sede `Barranquilla Centro`.
@@ -169,14 +171,12 @@ El sistema detecta pregunta:
 
 Aparece tarjeta con botones:
 
-- `Lo se`
-- `Ver respuesta`
-- `Escalar`
-- `Ignorar`
+- `Ver asistencia`
+- `Cerrar`
 
 ### Accion En Pantalla
 
-Click en `Ver respuesta`.
+Click en `Ver asistencia`.
 
 ### Respuesta Estructurada Esperada
 
@@ -214,7 +214,7 @@ Siguiente mejor accion:
 
 ### Accion En Pantalla
 
-Click en `Marcar resuelto`.
+Click en `Resuelto`.
 
 ### Evento Esperado
 
@@ -249,7 +249,7 @@ El sistema detecta:
 
 ### Accion En Pantalla
 
-Click en `Ver respuesta`.
+Click en `Ver asistencia`.
 
 El sistema muestra advertencia:
 
@@ -425,4 +425,3 @@ Marketing recibe insumos accionables basados en friccion real, no ideas abstract
 - "Cada clic genera inteligencia para entrenamiento y mejora de contenido."
 - "La demo corre local y no depende criticamente de la API."
 - "Marketing no recibe conversaciones; recibe evidencia agregada y briefs revisables."
-

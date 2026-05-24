@@ -2,7 +2,9 @@
 
 Fecha: 2026-05-24  
 Estado: listo para implementacion MVP  
-Fuente funcional: `SERFINANZA_ACTION_HUB_SPEC.md` y `DEMO_SCRIPT.md`
+Fuente funcional: `docs/current/SERFINANZA_ACTION_HUB_SPEC.md` y `docs/current/DEMO_SCRIPT.md`
+
+> Nota de vigencia 2026-05-24: el prototipo ya incluye login por roles, modo simulado y experimento de voz local con `voice-agent/` + Whisper `tiny`. El modo simulado sigue siendo el fallback de demo. El experimento de voz no guarda audio y envia solo texto por WebSocket a `/advisor`.
 
 ## 1. Objetivo Tecnico
 
@@ -14,7 +16,7 @@ El prototipo debe priorizar estabilidad de demo sobre autonomia amplia.
 
 1. La demo debe funcionar sin depender criticamente de internet.
 2. Gemini debe ser opcional: mejora redaccion si hay API key, pero no bloquea el flujo.
-3. La transcripcion de audio sera simulada visualmente.
+3. La transcripcion principal sera simulada visualmente; el microfono local queda como experimento opcional.
 4. SQLite local sera suficiente para eventos, sesiones, brechas y reportes.
 5. Las respuestas principales deben estar controladas por reglas y datos semilla.
 6. La UI debe mostrar producto real, no solo paginas de texto.
@@ -29,6 +31,7 @@ El prototipo debe priorizar estabilidad de demo sobre autonomia amplia.
 - Iconos: `lucide-react`.
 - Persistencia: SQLite local usando `node:sqlite`.
 - IA opcional: Gemini por API REST si existe `GEMINI_API_KEY`.
+- Voz experimental: Python FastAPI + `faster-whisper` + WebSocket local.
 - Ejecucion: local.
 
 Nota: `node:sqlite` esta disponible en el entorno actual, aunque Node lo marca como experimental. Para hackathon es aceptable porque evita dependencias nativas de SQLite en Windows.
@@ -39,13 +42,13 @@ La aplicacion vive en:
 
 `prototype/`
 
-La raiz del workspace conserva solo documentos activos y carpetas de insumo/historial.
+La raiz del workspace conserva carpetas principales e indice. Los documentos vivos estan en `docs/current/`.
 
 ## 5. Vistas
 
 ### 5.1 `/`
 
-Redirige o presenta acceso rapido a las cuatro vistas.
+Redirige a login.
 
 ### 5.2 `/advisor`
 
@@ -56,13 +59,15 @@ Debe mostrar:
 - asesor dummy;
 - cliente dummy;
 - sede;
+- control de jornada y atencion;
+- modo `Simulado` / `Microfono local`;
 - estado `Escuchando`;
 - consentimiento informado;
 - transcripcion simulada;
 - tarjetas de preguntas detectadas;
-- botones `Lo se`, `Ver respuesta`, `Escalar`, `Ignorar`;
+- botones `Ver asistencia`, `Cerrar`, `Resuelto`, `Escalar`, `Brecha`;
 - respuesta estructurada;
-- acciones `Marcar resuelto`, `Reportar brecha`.
+- accion `Finalizar atencion`.
 
 ### 5.3 `/quality`
 
@@ -381,4 +386,3 @@ La implementacion tecnica minima cumple si:
 8. La app funciona sin `GEMINI_API_KEY`.
 9. Si `GEMINI_API_KEY` existe, mejora textos sin romper fallback.
 10. No hay dependencias de despliegue cloud ni MCP.
-

@@ -5,6 +5,8 @@ Metodo: Specs-Driven Development
 Estado: MVP de hackathon  
 Version: canal presencial con copiloto contextual
 
+> Nota de vigencia 2026-05-24: la implementacion actual agrega login por roles, modo `Simulado` y modo experimental `Microfono local` con `voice-agent/` + Whisper `tiny`. Los botones vigentes en la UI son `Ver asistencia`, `Cerrar`, `Resuelto`, `Escalar` y `Brecha`. Las referencias anteriores a `Lo se`, `Ver respuesta` e `Ignorar` quedan como decisiones historicas de exploracion, no como contrato actual de UI.
+
 ## 1. Decision Estrategica
 
 Serfinanza Action Hub sera un copiloto contextual para atencion presencial en oficina. El sistema acompana la conversacion entre cliente y asesor, detecta preguntas bancarias relevantes, ofrece asistencia estructurada cuando el asesor la necesita y convierte esas interacciones en inteligencia para calidad, entrenamiento y marketing.
@@ -34,12 +36,13 @@ La omnicanalidad se mantiene como vision y como dimension de analitica futura. E
 
 ## 4. Modo De Captura En Demo
 
-La demo usara un modo hibrido visual:
+La demo usa un modo hibrido:
 
-- La UI mostrara estado de microfono `Escuchando`.
-- La transcripcion avanzara como si fuera en vivo.
-- La conversacion principal sera simulada y controlada para estabilidad.
-- El microfono real queda como extra opcional, no como dependencia critica.
+- La UI muestra estado de microfono `Escuchando`.
+- El modo `Simulado` permite avanzar una conversacion controlada.
+- El modo `Microfono local` recibe transcripciones desde `voice-agent/` por WebSocket.
+- El servicio local usa `faster-whisper` con modelo `tiny` por defecto.
+- El microfono real queda como experimento opcional, no como dependencia critica de la demo.
 
 Esta decision evita que ruido, permisos, latencia o errores de speech-to-text rompan la demo.
 
@@ -53,7 +56,7 @@ La interfaz del asesor mostrara el estado:
 
 `Consentimiento informado por aviso de atencion`
 
-El MVP guarda la transcripcion completa de la atencion, pero el acceso queda restringido:
+El MVP registra eventos y texto operativo necesario para la demo. No guarda audio. La transcripcion completa queda como capacidad futura, no como dependencia de esta version:
 
 - Asesor: ve asistencia en tiempo real, no consulta historico completo.
 - Supervisor/calidad: ve reportes agregados.
@@ -136,10 +139,10 @@ Para marketing:
 - Vista `Consola administrador`.
 - Vista `Reporte marketing`.
 - Demo de atencion presencial con transcripcion simulada.
+- Experimento de microfono local con Whisper `tiny`.
 - Tarjetas de deteccion de pregunta.
-- Botones: `Lo se`, `Ver respuesta`, `Escalar`, `Ignorar`.
-- Respuesta estructurada despues de `Ver respuesta`.
-- Acciones posteriores: `Marcar resuelto`, `Reportar brecha`.
+- Botones vigentes: `Ver asistencia`, `Cerrar`, `Resuelto`, `Escalar`, `Brecha`.
+- Respuesta estructurada despues de `Ver asistencia`.
 - Dashboard operacional con filtros.
 - Cola de brechas simple.
 - Reporte diario Markdown para marketing.
@@ -170,11 +173,11 @@ Para marketing:
    - intencion detectada;
    - confianza;
    - fragmento de pregunta;
-   - botones `Lo se`, `Ver respuesta`, `Escalar`, `Ignorar`.
+   - botones `Ver asistencia` y `Cerrar`.
 6. Asesor decide.
 7. El sistema registra evento.
-8. Si el asesor toca `Ver respuesta`, se muestra respuesta estructurada.
-9. Asesor puede `Marcar resuelto` o `Reportar brecha`.
+8. Si el asesor toca `Ver asistencia`, se muestra respuesta estructurada.
+9. Asesor puede marcar `Resuelto`, `Escalar` o `Brecha`.
 10. Los eventos alimentan dashboard, brechas y reporte de marketing.
 
 ## 10. Eventos De La Tarjeta De Asistencia
@@ -680,4 +683,3 @@ Serfinanza Action Hub es un copiloto contextual para asesores de oficina. Mientr
 Cada clic del asesor genera inteligencia: si sabe responder, si necesita apoyo, si debe escalar o si la deteccion no aplica. Esa data permite a calidad identificar brechas por sede, asesor y tema; al administrador revisar vacios de conocimiento; y a marketing recibir un reporte diario con oportunidades de contenido basadas en consultas reales.
 
 No estamos construyendo otro chatbot. Estamos convirtiendo la atencion presencial en un sistema de aprendizaje operativo para mejorar servicio, entrenamiento y adquisicion.
-
