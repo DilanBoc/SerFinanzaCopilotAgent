@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ClipboardList, RefreshCw } from "lucide-react";
+import { ClipboardList, RefreshCw, Filter } from "lucide-react";
 import { ActionButton, Badge, Panel } from "@/components/ui";
 import { AuthShell } from "@/components/auth-shell";
 
@@ -50,96 +50,110 @@ export default function AdminPage() {
 
   const topics = Array.from(new Set(gaps.map((gap) => gap.topic)));
 
+  const selectClasses = "mt-1 w-full rounded-xl border border-line bg-onyx px-4 py-2 text-sm font-bold text-ink focus:border-brand focus:ring-0 transition-all";
+
   return (
     <AuthShell>
-    <div className="space-y-5">
+    <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-medium uppercase tracking-wide text-brand">Administrador</p>
-          <h1 className="mt-2 text-3xl font-semibold text-ink">Cola de brechas de conocimiento</h1>
-          <p className="mt-2 max-w-3xl text-muted">
-            Revisa vacios reportados por asesores y cambia su estado operativo.
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-brand">Administrador</p>
+          <h1 className="mt-2 text-4xl font-black tracking-tighter text-ink uppercase">Gestión de Brechas</h1>
+          <p className="mt-2 max-w-3xl text-muted font-bold">
+            Revisa los vacíos de conocimiento reportados y gestiona el ciclo de vida de la respuesta.
           </p>
         </div>
         <ActionButton onClick={load} variant="secondary">
           <span className="flex items-center gap-2">
-            <RefreshCw size={15} /> Actualizar
+            <RefreshCw size={15} /> ACTUALIZAR
           </span>
         </ActionButton>
       </div>
 
-      <Panel title="Brechas pendientes">
-        <div className="mb-4 grid gap-3 md:grid-cols-4">
-          <label className="text-sm font-medium text-ink">
-            Estado
-            <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="mt-1 w-full rounded border border-line px-3 py-2 text-sm">
-              <option value="todos">Todos</option>
-              <option value="pendiente">Pendiente</option>
-              <option value="en_revision">En revision</option>
-              <option value="resuelta">Resuelta</option>
+      <Panel title="Centro de Control de Brechas" variant="neon">
+        <div className="mb-8 grid gap-4 md:grid-cols-4">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted">
+            <span className="flex items-center gap-2 mb-2"><Filter size={12} /> Estado</span>
+            <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className={selectClasses}>
+              <option value="todos">TODOS</option>
+              <option value="pendiente">PENDIENTE</option>
+              <option value="en_revision">EN REVISIÓN</option>
+              <option value="resuelta">RESUELTA</option>
             </select>
           </label>
-          <label className="text-sm font-medium text-ink">
-            Tema
-            <select value={topicFilter} onChange={(event) => setTopicFilter(event.target.value)} className="mt-1 w-full rounded border border-line px-3 py-2 text-sm">
-              <option value="todos">Todos</option>
-              {topics.map((topic) => <option key={topic} value={topic}>{topic}</option>)}
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted">
+            <span className="flex items-center gap-2 mb-2"><ClipboardList size={12} /> Tema</span>
+            <select value={topicFilter} onChange={(event) => setTopicFilter(event.target.value)} className={selectClasses}>
+              <option value="todos">TODOS</option>
+              {topics.map((topic) => <option key={topic} value={topic}>{topic.toUpperCase()}</option>)}
             </select>
           </label>
-          <label className="text-sm font-medium text-ink">
-            Sede
-            <select value={officeFilter} onChange={(event) => setOfficeFilter(event.target.value)} className="mt-1 w-full rounded border border-line px-3 py-2 text-sm">
-              <option value="todos">Todas</option>
-              <option value="off_001">Barranquilla Centro</option>
-              <option value="off_002">Bogota Norte</option>
-              <option value="off_003">Cartagena Bocagrande</option>
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted">
+            <span className="flex items-center gap-2 mb-2"><Filter size={12} /> Sede</span>
+            <select value={officeFilter} onChange={(event) => setOfficeFilter(event.target.value)} className={selectClasses}>
+              <option value="todos">TODAS</option>
+              <option value="off_001">BARRANQUILLA CENTRO</option>
+              <option value="off_002">BOGOTÁ NORTE</option>
+              <option value="off_003">CARTAGENA BOCAGRANDE</option>
+              <option value="off_004">MEDELLÍN EL POBLADO</option>
+              <option value="off_005">CALI CHIPICHAPE</option>
             </select>
           </label>
-          <label className="text-sm font-medium text-ink">
-            Prioridad
-            <select className="mt-1 w-full rounded border border-line px-3 py-2 text-sm" defaultValue="frecuencia">
-              <option value="frecuencia">Por frecuencia</option>
-              <option value="reciente">Mas recientes</option>
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted">
+            <span className="flex items-center gap-2 mb-2"><Filter size={12} /> Prioridad</span>
+            <select className={selectClasses} defaultValue="frecuencia">
+              <option value="frecuencia">POR FRECUENCIA</option>
+              <option value="reciente">MÁS RECIENTES</option>
             </select>
           </label>
         </div>
-        <div className="space-y-3">
+
+        <div className="space-y-4">
           {filtered.length === 0 ? (
-            <div className="flex min-h-[240px] items-center justify-center rounded border border-dashed border-line text-center text-muted">
-              <div>
-                <ClipboardList className="mx-auto mb-3" size={26} />
-                No hay brechas registradas. Reporta una desde el puesto del asesor.
-              </div>
+            <div className="flex min-h-[300px] flex-col items-center justify-center rounded-3xl border border-dashed border-line bg-onyx/50 text-center text-muted">
+              <ClipboardList className="mb-4 opacity-20" size={48} />
+              <p className="text-sm font-black uppercase tracking-widest">Sin brechas registradas</p>
             </div>
           ) : (
             filtered.map((gap) => (
-              <div key={gap.id} className="rounded border border-line p-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <p className="font-medium">{gap.topic}</p>
-                      <Badge tone={gap.status === "resuelta" ? "success" : "warn"}>{gap.status}</Badge>
+              <div key={gap.id} className="rounded-2xl border border-line bg-midnight p-6 hover:border-brand/50 transition-all group">
+                <div className="flex items-start justify-between gap-6">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3">
+                      <p className="text-lg font-black tracking-tight text-ink uppercase">{gap.topic}</p>
+                      <Badge tone={gap.status === "resuelta" ? "success" : "warn"}>{gap.status.toUpperCase()}</Badge>
                     </div>
-                    <p className="mt-2 text-sm text-muted">{gap.question_text}</p>
-                    <p className="mt-2 text-xs text-muted">Intencion: {gap.intent}</p>
-                    <p className="mt-1 text-xs text-muted">Fuentes: {gap.source_ids ?? "sin fuente suficiente"}</p>
-                    <p className="mt-3 rounded bg-surface p-3 text-sm text-muted">
-                      Accion sugerida: validar fuente y reforzar entrenamiento antes de cerrar la brecha.
-                    </p>
+                    <p className="mt-3 text-sm font-medium text-muted leading-relaxed italic">"{gap.question_text}"</p>
+                    
+                    <div className="mt-6 flex flex-wrap gap-4 text-[10px] font-bold uppercase tracking-wider">
+                       <div className="flex flex-col">
+                          <span className="text-brand/50 mb-0.5">Intención</span>
+                          <span className="text-ink">{gap.intent}</span>
+                       </div>
+                       <div className="flex flex-col border-l border-line pl-4">
+                          <span className="text-brand/50 mb-0.5">Fuente Asociada</span>
+                          <span className="text-ink">{gap.source_ids || "SIN FUENTE"}</span>
+                       </div>
+                    </div>
+                    
+                    <div className="mt-6 rounded-xl bg-onyx border border-line p-4 text-xs font-bold text-muted group-hover:border-brand/30 transition-all">
+                      <span className="text-brand mr-2">BOCA SUGIERE:</span> Validar fuente técnica y programar refuerzo en la sede antes de cerrar.
+                    </div>
                   </div>
-                  <div className="min-w-44">
-                    <label className="text-xs font-medium text-muted">
-                      Cambiar estado
-                      <select
-                        value={gap.status}
-                        onChange={(event) => update(gap.id, event.target.value)}
-                        className="mt-1 w-full rounded border border-line bg-white px-3 py-2 text-sm text-ink"
-                      >
-                        <option value="pendiente">Pendiente</option>
-                        <option value="en_revision">En revision</option>
-                        <option value="resuelta">Resuelta</option>
-                      </select>
+                  
+                  <div className="min-w-[200px]">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-brand/70 mb-2 block">
+                      Cambiar Estado
                     </label>
+                    <select
+                      value={gap.status}
+                      onChange={(event) => update(gap.id, event.target.value)}
+                      className="w-full rounded-xl border border-brand/30 bg-midnight px-4 py-3 text-sm font-black text-ink focus:border-brand transition-all cursor-pointer"
+                    >
+                      <option value="pendiente">PENDIENTE</option>
+                      <option value="en_revision">EN REVISIÓN</option>
+                      <option value="resuelta">RESUELTA</option>
+                    </select>
                   </div>
                 </div>
               </div>

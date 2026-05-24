@@ -12,8 +12,18 @@ import {
   Pause,
   Play,
   Search,
-  ShieldCheck,
+  Zap,
   X,
+  User,
+  ShieldCheck,
+  TrendingUp,
+  Target,
+  Sparkles,
+  ChevronRight,
+  MessageSquare,
+  BarChart,
+  Lightbulb,
+  Shield,
 } from "lucide-react";
 import { AuthShell } from "@/components/auth-shell";
 import { ActionButton, Badge, Panel } from "@/components/ui";
@@ -23,7 +33,7 @@ import type { CustomerProfile, DetectedQuestion, StructuredAnswer, TranscriptLin
 
 type WorkdayState = "off" | "active" | "paused";
 type AttentionState = "idle" | "customer_loaded" | "in_attention";
-type TranscriptMode = "simulated" | "microphone";
+type TranscriptMode = "microphone"; // Removed "simulated" choice as requested
 type VoiceStatus = "idle" | "connecting" | "connected" | "error";
 
 const VOICE_AGENT_URL = "ws://localhost:8765/ws/transcript";
@@ -37,31 +47,17 @@ export default function AdvisorPage() {
   const [sessionId, setSessionId] = useState<string>("");
   const [lineCount, setLineCount] = useState(0);
   const [liveLines, setLiveLines] = useState<TranscriptLine[]>([]);
-  const [transcriptMode, setTranscriptMode] = useState<TranscriptMode>("simulated");
   const [voiceStatus, setVoiceStatus] = useState<VoiceStatus>("idle");
   const [activeQuestion, setActiveQuestion] = useState<DetectedQuestion | null>(null);
   const [answer, setAnswer] = useState<StructuredAnswer | null>(null);
-  const [notice, setNotice] = useState("Inicia jornada para activar el puesto.");
+  const [notice, setNotice] = useState("BOCA LISTO.");
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const visibleLines = useMemo(
-    () => transcriptMode === "simulated" ? transcript.slice(0, lineCount) : liveLines,
-    [lineCount, liveLines, transcriptMode],
-  );
+  const visibleLines = liveLines; // Only live lines now
   const copilotActive = workday === "active" && attention === "in_attention";
 
   useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.code === "Space" && copilotActive) {
-        event.preventDefault();
-        advanceConversation();
-      }
-    }
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  });
-
-  useEffect(() => {
-    if (!copilotActive || transcriptMode !== "microphone") {
+    if (!copilotActive) {
       setVoiceStatus("idle");
       return;
     }
@@ -71,7 +67,7 @@ export default function AdvisorPage() {
 
     socket.onopen = () => {
       setVoiceStatus("connected");
-      setNotice("Servicio de voz conectado. Habla frente al microfono local.");
+      setNotice("VOZ ACTIVA. BOCA ESCUCHANDO.");
     };
 
     socket.onmessage = (event) => {
@@ -80,13 +76,13 @@ export default function AdvisorPage() {
         if (message.type !== "transcript" || typeof message.text !== "string") return;
         ingestLiveTranscript(message.text);
       } catch {
-        setNotice("Se recibio una transcripcion con formato no valido.");
+        setNotice("ERROR DE VOZ.");
       }
     };
 
     socket.onerror = () => {
       setVoiceStatus("error");
-      setNotice("No se pudo conectar con el servicio local de voz. Puedes usar modo simulado.");
+      setNotice("MICRÓFONO NO DISPONIBLE.");
     };
 
     socket.onclose = () => {
@@ -94,21 +90,21 @@ export default function AdvisorPage() {
     };
 
     return () => socket.close();
-  }, [copilotActive, transcriptMode, sessionId]);
+  }, [copilotActive, sessionId]);
 
   async function searchCustomer() {
     setCustomerError("");
     setSelectedCustomer(null);
     const response = await fetch(`/api/customers/${encodeURIComponent(documentId.trim())}`);
     if (!response.ok) {
-      setCustomerError("Cliente dummy no encontrado. Para el MVP solo se permiten clientes precargados.");
+      setCustomerError("NO ENCONTRADO.");
       setAttention("idle");
       return;
     }
     const data = await response.json();
     setSelectedCustomer(data.customer);
     setAttention("customer_loaded");
-    setNotice("Cliente identificado. Puedes iniciar atencion.");
+    setNotice("CLIENTE IDENTIFICADO.");
   }
 
   async function startAttention() {
@@ -121,7 +117,7 @@ export default function AdvisorPage() {
     setLiveLines([]);
     setAnswer(null);
     setActiveQuestion(null);
-    setNotice("Atencion iniciada. Copiloto escuchando.");
+    setNotice("ESCANEANDO CONTEXTO...");
   }
 
   function finishAttention() {
@@ -132,30 +128,7 @@ export default function AdvisorPage() {
     setAnswer(null);
     setActiveQuestion(null);
     setVoiceStatus("idle");
-    setNotice("Atencion finalizada. Puedes iniciar una nueva atencion para el cliente cargado.");
-  }
-
-  function advanceConversation() {
-    if (!copilotActive || transcriptMode !== "simulated") return;
-    const nextCount = Math.min(lineCount + 1, transcript.length);
-    setLineCount(nextCount);
-    setAnswer(null);
-    const detected = detectedQuestions.find((question) => question.lineIndex === nextCount - 1) ?? null;
-    setActiveQuestion(detected);
-    if (detected && sessionId) {
-      setNotice(`Pregunta detectada: ${detected.topic}`);
-      fetch("/api/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionId,
-          eventType: "QUESTION_DETECTED",
-          intent: detected.intent,
-          confidence: detected.confidence,
-          payload: { ...detected, trigger: detected.fragment },
-        }),
-      });
-    }
+    setNotice("SESIÓN FINALIZADA.");
   }
 
   function ingestLiveTranscript(text: string) {
@@ -169,7 +142,7 @@ export default function AdvisorPage() {
       setActiveQuestion(detected);
 
       if (detected && sessionId) {
-        setNotice(`Pregunta detectada por voz: ${detected.topic}`);
+        setNotice(`DETECTADO: ${detected.topic.toUpperCase()}`);
         fetch("/api/events", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -181,8 +154,6 @@ export default function AdvisorPage() {
             payload: { ...detected, trigger: detected.fragment, source: "local-whisper" },
           }),
         });
-      } else {
-        setNotice("Transcripcion recibida sin consulta accionable.");
       }
 
       return nextLines;
@@ -203,7 +174,6 @@ export default function AdvisorPage() {
         payload: { questionId: activeQuestion.id, trigger: activeQuestion.fragment },
       }),
     });
-    setNotice("Tarjeta cerrada; evento registrado como cierre sin asistencia.");
     setActiveQuestion(null);
   }
 
@@ -227,7 +197,6 @@ export default function AdvisorPage() {
       body: JSON.stringify({ sessionId, intent: activeQuestion.intent, question: activeQuestion.fragment }),
     });
     setAnswer(await response.json());
-    setNotice("Asistencia estructurada generada.");
   }
 
   async function markResolved() {
@@ -242,7 +211,6 @@ export default function AdvisorPage() {
         payload: { questionId: activeQuestion.id },
       }),
     });
-    setNotice("Consulta marcada como resuelta.");
     setActiveQuestion(null);
     setAnswer(null);
   }
@@ -261,7 +229,7 @@ export default function AdvisorPage() {
         payload: { questionId: activeQuestion.id, trigger: activeQuestion.fragment },
       }),
     });
-    setNotice("Caso escalado como riesgo operacional.");
+    setNotice("CASO ESCALADO.");
   }
 
   async function reportGap() {
@@ -277,258 +245,317 @@ export default function AdvisorPage() {
         sourceIds: answer?.sources.map((source) => source.id) ?? [],
       }),
     });
-    setNotice("Brecha registrada para administrador.");
+    setNotice("BRECHA REGISTRADA.");
     setActiveQuestion(null);
     setAnswer(null);
   }
 
   return (
     <AuthShell>
-      <div className="grid gap-4 xl:grid-cols-[360px_1fr_400px]">
-        <aside className="space-y-4">
-          <Panel title="Jornada del asesor">
-            <div className="space-y-3 text-sm">
-              <div className="rounded bg-surface p-3">
-                <p className="font-medium">{advisor.name}</p>
-                <p className="text-muted">{advisor.seniority}</p>
-                <p className="text-muted">{office.name}</p>
+      <div className="space-y-6"> {/* Reduced from 8 to 6 for vertical space */}
+        {/* HERO BANNER: Advisor & Client (Reduced size) */}
+        <section className="grid gap-6 lg:grid-cols-2">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-midnight to-onyx border border-line p-6 shadow-2xl"> {/* Reduced from p-8 to p-6 */}
+            <div className="absolute top-0 right-0 p-4 text-brand/10"> {/* Reduced p */}
+              <Zap size={100} fill="currentColor" />
+            </div>
+            <div className="relative z-10 flex items-center gap-6">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand/10 border border-brand/20 text-brand shadow-inner"> {/* h-20->h-16 */}
+                <User size={32} />
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted">Estado</span>
-                <Badge tone={workday === "active" ? "success" : workday === "paused" ? "warn" : "neutral"}>
-                  {workday === "active" ? "Jornada activa" : workday === "paused" ? "Copiloto pausado" : "Fuera de jornada"}
-                </Badge>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <ActionButton onClick={() => { setWorkday("active"); setNotice("Jornada iniciada."); }} disabled={workday !== "off"}>
-                  <span className="flex items-center gap-2"><Play size={15} /> Iniciar</span>
-                </ActionButton>
-                <ActionButton onClick={() => { setWorkday(workday === "paused" ? "active" : "paused"); setNotice(workday === "paused" ? "Copiloto reanudado." : "Copiloto pausado."); }} variant="secondary" disabled={workday === "off"}>
-                  <span className="flex items-center gap-2"><Pause size={15} /> {workday === "paused" ? "Reanudar" : "Pausar"}</span>
-                </ActionButton>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand mb-0.5">Atención</p>
+                <h2 className="text-2xl font-black tracking-tighter text-ink leading-tight">{advisor.name}</h2>
+                <p className="text-muted font-bold text-[10px] uppercase">{office.name} • {advisor.seniority}</p>
+                <div className="mt-3 flex items-center gap-3">
+                  <Badge tone={workday === "active" ? "success" : workday === "paused" ? "warn" : "neutral"}>
+                    {workday === "active" ? "ACTIVO" : workday === "paused" ? "PAUSADO" : "OFFLINE"}
+                  </Badge>
+                  <div className="flex gap-2">
+                    <button onClick={() => setWorkday("active")} className="p-1.5 rounded-lg bg-surface border border-line hover:border-brand text-muted hover:text-brand transition-all">
+                      <Play size={14} />
+                    </button>
+                    <button onClick={() => setWorkday(workday === "paused" ? "active" : "paused")} className="p-1.5 rounded-lg bg-surface border border-line hover:border-warn text-muted hover:text-warn transition-all">
+                      <Pause size={14} />
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          </Panel>
+          </div>
 
-          <Panel title="Identificar cliente">
-            <div className="space-y-3">
-              <label className="block text-sm font-medium text-ink">
-                Documento
-                <div className="mt-2 flex gap-2">
+          <div className="relative overflow-hidden rounded-3xl bg-midnight border border-line p-6 shadow-2xl">
+            <div className="relative z-10 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-neon-cyan mb-0.5">Identificación</p>
+                  <h2 className="text-2xl font-black tracking-tighter text-ink leading-tight">Cliente</h2>
+                </div>
+                {selectedCustomer && <Badge tone="brand">VERIFICADO</Badge>}
+              </div>
+
+              <div className="flex gap-3">
+                <div className="relative flex-1">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" size={16} />
                   <input
                     value={documentId}
                     onChange={(event) => setDocumentId(event.target.value)}
-                    className="min-w-0 flex-1 rounded border border-line px-3 py-2 text-sm"
-                    placeholder="Ej. 1045678901"
+                    className="w-full rounded-xl border border-line bg-onyx py-3 pl-10 pr-4 text-xs font-bold focus:border-neon-cyan focus:ring-0 transition-all placeholder:text-muted/50 uppercase"
+                    placeholder="DOCUMENTO"
                   />
-                  <button
-                    type="button"
-                    onClick={searchCustomer}
-                    className="focus-ring rounded bg-brand px-3 text-white hover:bg-blue-700"
-                    aria-label="Buscar cliente"
-                  >
-                    <Search size={17} />
-                  </button>
                 </div>
-              </label>
-              {customerError ? <p className="text-sm text-danger">{customerError}</p> : null}
-              {selectedCustomer ? (
-                <div className="rounded border border-line bg-surface p-3 text-sm">
-                  <p className="font-medium">{selectedCustomer.name}</p>
-                  <p className="text-muted">{selectedCustomer.segment}</p>
-                  <p className="text-muted">Canal: {selectedCustomer.preferredChannel}</p>
-                  <p className="text-muted">Productos: {selectedCustomer.activeProducts.join(", ")}</p>
-                </div>
-              ) : null}
-              <div className="grid grid-cols-2 gap-2">
-                <ActionButton onClick={startAttention} disabled={workday !== "active" || attention !== "customer_loaded"}>
-                  Iniciar atencion
-                </ActionButton>
-                <ActionButton onClick={finishAttention} disabled={attention !== "in_attention"} variant="secondary">
-                  Finalizar atencion
-                </ActionButton>
-              </div>
-            </div>
-          </Panel>
-
-          {selectedCustomer ? (
-            <Panel title="Insights de atencion">
-              <div className="space-y-3 text-sm">
-                <p className="text-muted">Ultima interaccion: {selectedCustomer.lastInteraction}</p>
-                <div>
-                  <p className="font-medium">Alertas</p>
-                  <div className="mt-2 space-y-1">
-                    {selectedCustomer.riskAlerts.map((item) => <Badge key={item} tone="warn">{item}</Badge>)}
-                  </div>
-                </div>
-                <div>
-                  <p className="font-medium">Sugerencias suaves</p>
-                  <ul className="mt-2 space-y-2 text-muted">
-                    {selectedCustomer.softInsights.map((item) => <li key={item}>- {item}</li>)}
-                  </ul>
+                <div className="flex gap-2">
+                  <ActionButton onClick={searchCustomer} variant="secondary" size="md">
+                    BUSCAR
+                  </ActionButton>
+                  <ActionButton onClick={startAttention} disabled={workday !== "active" || attention !== "customer_loaded"} size="md">
+                    INICIAR ATENCIÓN
+                  </ActionButton>
+                  <ActionButton onClick={finishAttention} disabled={attention !== "in_attention"} variant="danger" size="md">
+                    FINALIZAR
+                  </ActionButton>
                 </div>
               </div>
-            </Panel>
-          ) : null}
-        </aside>
-
-        <section className="space-y-4">
-          <Panel
-            title={transcriptMode === "simulated" ? "Transcripcion en vivo simulada" : "Transcripcion por microfono local"}
-            action={
-              <Badge tone={copilotActive ? "success" : "neutral"}>
-                <Mic size={13} /> {copilotActive ? "Escuchando" : "Inactivo"}
-              </Badge>
-            }
-          >
-            <div className="mb-4 grid gap-3 border-b border-line pb-4 md:grid-cols-[1fr_auto]">
-              <div className="flex flex-wrap gap-2">
-                <ActionButton
-                  onClick={() => {
-                    setTranscriptMode("simulated");
-                    setNotice("Modo simulado activo.");
-                  }}
-                  variant={transcriptMode === "simulated" ? "primary" : "secondary"}
-                >
-                  Simulado
-                </ActionButton>
-                <ActionButton
-                  onClick={() => {
-                    setTranscriptMode("microphone");
-                    setNotice("Modo microfono local activo. Inicia el servicio Python para conectar.");
-                  }}
-                  variant={transcriptMode === "microphone" ? "primary" : "secondary"}
-                >
-                  <span className="flex items-center gap-2"><Radio size={15} /> Microfono local</span>
-                </ActionButton>
-              </div>
-              <Badge tone={voiceStatus === "connected" ? "success" : voiceStatus === "error" ? "danger" : "neutral"}>
-                {transcriptMode === "simulated"
-                  ? "Demo controlada"
-                  : voiceStatus === "connected"
-                    ? "Voz conectada"
-                    : voiceStatus === "connecting"
-                      ? "Conectando voz"
-                      : voiceStatus === "error"
-                        ? "Voz desconectada"
-                        : "Voz inactiva"}
-              </Badge>
             </div>
-            <div className="min-h-[560px] space-y-3">
-              {visibleLines.map((line: TranscriptLine, index) => (
-                <div key={`${line.speaker}-${index}`} className="rounded border border-line bg-surface p-3">
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted">{line.speaker}</p>
-                  <p className="mt-1 leading-6">{line.text}</p>
-                </div>
-              ))}
-              {visibleLines.length === 0 ? (
-                <div className="flex min-h-[460px] items-center justify-center rounded border border-dashed border-line text-center text-muted">
-                  {copilotActive
-                    ? transcriptMode === "simulated"
-                      ? "Presiona espacio o usa Siguiente frase para avanzar la conversacion."
-                      : "Inicia el servicio Python de voz y habla frente al microfono."
-                    : "Inicia jornada, identifica cliente e inicia atencion para activar el copiloto."}
-                </div>
-              ) : null}
-            </div>
-            <div className="mt-4 flex items-center justify-between gap-3 border-t border-line pt-4">
-              <p className="text-sm text-muted">{notice}</p>
-              <ActionButton onClick={advanceConversation} disabled={!copilotActive || transcriptMode !== "simulated" || lineCount >= transcript.length} variant="secondary">
-                Siguiente frase
-              </ActionButton>
-            </div>
-          </Panel>
+          </div>
         </section>
 
-        <aside className="space-y-4">
-          <Panel title="Copiloto contextual">
-            {activeQuestion ? (
-              <div className="space-y-4">
-                <div className="rounded border border-blue-200 bg-blue-50 p-3">
-                  <div className="flex items-start gap-2">
-                    <CircleDot className="mt-1 text-brand" size={17} />
-                    <div>
-                      <p className="font-medium text-ink">{activeQuestion.topic}</p>
-                      <p className="mt-1 text-sm text-muted">{activeQuestion.fragment}</p>
-                      <p className="mt-2 text-xs text-muted">Confianza: {Math.round(activeQuestion.confidence * 100)}%</p>
-                    </div>
+        {/* MAIN AREA: Copilot & Insights (Full Width) */}
+        <div className="space-y-6">
+          
+          {/* Visual Insights Cards (Expanded) */}
+          <div className="grid gap-4 md:grid-cols-4 lg:grid-cols-8 animate-in fade-in duration-500">
+            {selectedCustomer && attention === "in_attention" ? (
+              <>
+                <div className="rounded-2xl bg-midnight border border-line p-4 hover:border-brand transition-all group">
+                  <p className="text-[8px] font-black text-brand uppercase tracking-wider mb-1">Nombre</p>
+                  <p className="font-black text-ink text-xs truncate uppercase">{selectedCustomer.name}</p>
+                </div>
+                <div className="rounded-2xl bg-midnight border border-line p-4 hover:border-brand transition-all group">
+                  <p className="text-[8px] font-black text-brand uppercase tracking-wider mb-1">Segmento</p>
+                  <p className="font-black text-ink text-xs truncate uppercase">{selectedCustomer.segment}</p>
+                </div>
+                <div className="rounded-2xl bg-midnight border border-line p-4 hover:border-neon-cyan transition-all group">
+                  <div className="flex items-center justify-between mb-2">
+                     <TrendingUp className="text-neon-cyan group-hover:scale-110 transition-transform" size={20} />
+                     <span className="text-[10px] font-black text-neon-cyan">{selectedCustomer.simulatedScore}</span>
                   </div>
+                  <p className="text-[8px] font-black text-muted uppercase tracking-wider">Score</p>
+                  <p className="mt-0.5 font-black text-ink text-xs truncate">{selectedCustomer.commercialPropensity}</p>
                 </div>
-                <div className="grid grid-cols-[1fr_auto] gap-2">
-                  <ActionButton onClick={viewAssistance}>
-                    <span className="flex items-center gap-2"><Eye size={15} /> Ver asistencia</span>
-                  </ActionButton>
-                  <ActionButton onClick={closeCard} variant="secondary">
-                    <span className="flex items-center gap-2"><X size={15} /> Cerrar</span>
-                  </ActionButton>
+                <div className="rounded-2xl bg-midnight border border-line p-4 hover:border-warn transition-all group">
+                  <div className="flex items-center justify-between mb-2">
+                     <AlertTriangle className="text-warn group-hover:scale-110 transition-transform" size={20} />
+                     <span className="text-[10px] font-black text-warn uppercase">Riesgo</span>
+                  </div>
+                  <p className="text-[8px] font-black text-muted uppercase tracking-wider">Alertas</p>
+                  <p className="mt-0.5 font-black text-ink text-xs truncate">{selectedCustomer.riskAlerts[0]}</p>
                 </div>
-              </div>
+                <div className="rounded-2xl bg-midnight border border-line p-4 hover:border-electric-violet transition-all group">
+                  <div className="flex items-center justify-between mb-2">
+                     <Target className="text-electric-violet group-hover:scale-110 transition-transform" size={20} />
+                     <span className="text-[10px] font-black text-electric-violet uppercase">Venta</span>
+                  </div>
+                  <p className="text-[8px] font-black text-muted uppercase tracking-wider">Sugerencia</p>
+                  <p className="mt-0.5 font-black text-ink text-xs truncate">{selectedCustomer.softInsights[0]}</p>
+                </div>
+                {/* 3 Additional Insights (Requested) */}
+                <div className="rounded-2xl bg-midnight border border-line p-4 hover:border-brand transition-all group">
+                  <div className="flex items-center justify-between mb-2">
+                     <Shield className="text-brand group-hover:scale-110 transition-transform" size={20} />
+                     <span className="text-[10px] font-black text-brand uppercase">Perfil</span>
+                  </div>
+                  <p className="text-[8px] font-black text-muted uppercase tracking-wider">Fidelización</p>
+                  <p className="mt-0.5 font-black text-ink text-xs truncate">{selectedCustomer.softInsights[5]}</p>
+                </div>
+                <div className="rounded-2xl bg-midnight border border-line p-4 hover:border-accent transition-all group">
+                  <div className="flex items-center justify-between mb-2">
+                     <BarChart className="text-accent group-hover:scale-110 transition-transform" size={20} />
+                     <span className="text-[10px] font-black text-accent uppercase">Actividad</span>
+                  </div>
+                  <p className="text-[8px] font-black text-muted uppercase tracking-wider">Comportamiento</p>
+                  <p className="mt-0.5 font-black text-ink text-xs truncate">{selectedCustomer.softInsights[4]}</p>
+                </div>
+                <div className="rounded-2xl bg-midnight border border-line p-4 hover:border-warn transition-all group">
+                  <div className="flex items-center justify-between mb-2">
+                     <Lightbulb className="text-warn group-hover:scale-110 transition-transform" size={20} />
+                     <span className="text-[10px] font-black text-warn uppercase">Tip BOCA</span>
+                  </div>
+                  <p className="text-[8px] font-black text-muted uppercase tracking-wider">Cross-Sell</p>
+                  <p className="mt-0.5 font-black text-ink text-xs truncate">{selectedCustomer.softInsights[3]}</p>
+                </div>
+              </>
             ) : (
-              <div className="flex min-h-[190px] items-center justify-center rounded border border-dashed border-line text-center text-sm text-muted">
-                El copiloto mostrara una tarjeta cuando detecte una pregunta bancaria.
+              <div className="col-span-4 lg:col-span-8 rounded-2xl bg-midnight border border-dashed border-line p-6 flex items-center justify-center gap-4">
+                 <ShieldCheck className="text-brand/50" size={32} />
+                 <p className="text-sm font-bold text-muted/60 uppercase tracking-widest italic">
+                   BOCA: Escaneando la conversación en tiempo real para detectar oportunidades y brindar asistencia estructurada.
+                 </p>
               </div>
             )}
-          </Panel>
+          </div>
 
-          {answer ? (
-            <Panel
-              title="Respuesta estructurada"
-              action={
-                answer.warnings.length ? (
-                  <Badge tone="warn">
-                    <AlertTriangle size={13} /> Advertencia
-                  </Badge>
-                ) : null
-              }
-            >
-              <div className="space-y-4 text-sm">
-                <div>
-                  <p className="font-medium">Resumen</p>
-                  <p className="mt-1 text-muted">{answer.summary}</p>
-                </div>
-                <div>
-                  <p className="font-medium">Guion sugerido</p>
-                  <p className="mt-1 rounded bg-surface p-3 leading-6">{answer.script}</p>
-                </div>
-                <div>
-                  <p className="font-medium">Checklist</p>
-                  <ul className="mt-2 space-y-1 text-muted">
-                    {answer.checklist.map((item) => (
-                      <li key={item} className="flex gap-2">
-                        <CheckCircle2 className="mt-0.5 text-accent" size={15} />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <p className="font-medium">Siguiente mejor accion</p>
-                  <p className="mt-1 text-muted">{answer.nextBestAction}</p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {answer.sources.map((source) => (
-                    <Badge key={source.id} tone="brand">{source.label}</Badge>
-                  ))}
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  <ActionButton onClick={markResolved}>Resuelto</ActionButton>
-                  <ActionButton onClick={escalate} variant="secondary">
-                    <span className="flex items-center gap-2"><Flag size={15} /> Escalar</span>
-                  </ActionButton>
-                  <ActionButton onClick={reportGap} variant="secondary">Brecha</ActionButton>
-                </div>
-              </div>
-            </Panel>
-          ) : null}
+          {/* COPILOT CORE */}
+          <div className="space-y-6">
+             {activeQuestion ? (
+                <div className="animate-in zoom-in-95 duration-300">
+                  <Panel 
+                    title="Asistencia Detectada" 
+                    variant="neon"
+                    action={
+                      <div className="flex items-center gap-4">
+                        <Badge tone="brand">CONFIANZA: {Math.round(activeQuestion.confidence * 100)}%</Badge>
+                        <div className="flex items-center gap-2 border-l border-line pl-4">
+                           <div className="h-2 w-2 rounded-full bg-accent animate-pulse"></div>
+                           <span className="text-[10px] font-black text-muted uppercase">MIC ACTIVO</span>
+                        </div>
+                      </div>
+                    }
+                  >
+                    <div className="space-y-6">
+                      <div className="flex items-start gap-4 p-4 rounded-2xl bg-brand/5 border border-brand/20">
+                         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-white shadow-lg shadow-brand/40">
+                            <Sparkles size={24} />
+                         </div>
+                         <div className="flex-1">
+                            <p className="text-xs font-black text-brand uppercase tracking-widest mb-1">Intención: {activeQuestion.topic}</p>
+                            <p className="text-lg font-black text-ink leading-tight italic">"{activeQuestion.fragment}"</p>
+                         </div>
+                      </div>
 
-          <Panel title="Privacidad">
-            <div className="flex items-start gap-2 text-sm text-muted">
-              <ShieldCheck className="mt-0.5 text-brand" size={17} />
-              <p>Atencion transcrita para calidad y mejora del servicio. Datos dummy para demo.</p>
-            </div>
-          </Panel>
-        </aside>
+                      {!answer ? (
+                        <div className="flex gap-3">
+                          <ActionButton onClick={viewAssistance} size="lg">GENERAR ASISTENCIA BOCA</ActionButton>
+                          <ActionButton onClick={closeCard} variant="secondary" size="lg">DESCARTAR</ActionButton>
+                        </div>
+                      ) : (
+                        <div className="space-y-6 border-t border-line pt-6 animate-in fade-in slide-in-from-bottom-4">
+                          <div className="grid gap-6 md:grid-cols-2">
+                            <div className="space-y-4">
+                              <div>
+                                <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-2">Guion Sugerido</p>
+                                <div className="rounded-2xl bg-onyx border border-line p-5 text-sm leading-relaxed font-medium italic">
+                                  "{answer.script}"
+                                </div>
+                              </div>
+                              <div>
+                                <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-2">Checklist Operativo</p>
+                                <ul className="space-y-2">
+                                  {answer.checklist.map((c, i) => (
+                                    <li key={i} className="flex items-center gap-3 text-sm font-bold text-ink">
+                                      <CheckCircle2 size={16} className="text-accent" /> {c}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                            <div className="space-y-6">
+                              <div className="rounded-2xl bg-surface border border-line p-5">
+                                <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1 text-center">Próxima Mejor Acción</p>
+                                <p className="text-center font-black text-neon-cyan uppercase tracking-tight">{answer.nextBestAction}</p>
+                              </div>
+                              <div className="space-y-2">
+                                 <p className="text-[10px] font-black text-muted uppercase tracking-widest">Fuentes Consultadas</p>
+                                 <div className="flex flex-wrap gap-2">
+                                    {answer.sources.map(s => <Badge key={s.id} tone="brand">{s.label}</Badge>)}
+                                 </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <ActionButton onClick={markResolved} size="sm" className="flex-1">RESUELTO</ActionButton>
+                                <ActionButton onClick={escalate} variant="secondary" size="sm"><Flag size={14} /></ActionButton>
+                                <ActionButton onClick={reportGap} variant="secondary" size="sm">BRECHA</ActionButton>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </Panel>
+                </div>
+             ) : (
+                <div className="flex flex-col items-center justify-center rounded-3xl border border-line bg-midnight/50 py-24 text-center">
+                  <div className="relative mb-6">
+                    <div className="absolute inset-0 blur-2xl bg-brand/20 rounded-full animate-pulse"></div>
+                    <ShieldCheck className="relative text-brand" size={48} />
+                  </div>
+                  <h3 className="text-lg font-black tracking-tight text-ink uppercase">BOCA Contextual Scaning</h3>
+                  <p className="mt-1 max-w-sm text-muted font-bold text-xs uppercase tracking-widest">{notice}</p>
+                  
+                  {/* Status witness when no active question */}
+                  <div className="mt-8 flex items-center gap-4 border-t border-line/20 pt-8">
+                     <div className="flex items-center gap-2">
+                        <div className={`h-1.5 w-1.5 rounded-full ${voiceStatus === 'connected' ? 'bg-accent animate-pulse' : 'bg-muted'}`}></div>
+                        <span className="text-[10px] font-black text-muted uppercase">{voiceStatus === 'connected' ? 'Escuchando' : 'Micrófono Inactivo'}</span>
+                     </div>
+                     <Badge tone={voiceStatus === "connected" ? "success" : voiceStatus === "error" ? "danger" : "neutral"}>
+                        WS: {voiceStatus.toUpperCase()}
+                     </Badge>
+                  </div>
+                </div>
+             )}
+          </div>
+        </div>
       </div>
+
+      {/* TRANSCRIPTION DRAWER (Option A) */}
+      <div className={`fixed inset-y-0 right-0 z-[60] w-80 bg-midnight border-l border-line shadow-2xl transition-transform duration-300 transform ${isDrawerOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div className="flex flex-col h-full">
+          <div className="flex items-center justify-between p-6 border-b border-line bg-onyx/50">
+            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-ink">Monitor de Voz</h3>
+            <button onClick={() => setIsDrawerOpen(false)} className="text-muted hover:text-ink transition-colors">
+              <X size={18} />
+            </button>
+          </div>
+          
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin">
+            {liveLines.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-center opacity-30">
+                <MessageSquare size={32} className="mb-4" />
+                <p className="text-[10px] font-bold uppercase tracking-widest">Esperando señal...</p>
+              </div>
+            ) : (
+              liveLines.map((line, i) => (
+                <div key={i} className="animate-in fade-in slide-in-from-right-2">
+                  <p className="text-[8px] font-black text-brand uppercase tracking-[0.2em] mb-1">{line.speaker}</p>
+                  <div className="bg-onyx border border-line p-3 rounded-xl rounded-tl-none">
+                    <p className="text-xs font-medium leading-relaxed">{line.text}</p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+          
+          <div className="p-6 border-t border-line bg-onyx/30">
+             <div className="flex items-center justify-between mb-4">
+                <span className="text-[10px] font-bold text-muted uppercase italic">Último estado: {notice}</span>
+                <Radio size={14} className={voiceStatus === 'connected' ? 'text-accent animate-pulse' : 'text-muted'} />
+             </div>
+             <p className="text-[8px] text-muted font-medium text-center uppercase tracking-widest">Detección Whisper local habilitada</p>
+          </div>
+        </div>
+      </div>
+
+      {/* DRAWER TRIGGER BUTTON */}
+      <button 
+        onClick={() => setIsDrawerOpen(true)}
+        className={`fixed bottom-8 right-8 z-[55] flex h-12 w-12 items-center justify-center rounded-2xl bg-brand text-white shadow-xl shadow-brand/20 transition-all hover:scale-110 active:scale-95 ${isDrawerOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      >
+        <MessageSquare size={20} />
+        {liveLines.length > 0 && (
+          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[8px] font-black text-white ring-2 ring-midnight animate-bounce">
+            {liveLines.length}
+          </span>
+        )}
+      </button>
+
+      {/* PRIVACY FOOTER (Moved/Integrated as requested to be less useful/obvious) */}
+      <footer className="mt-8 border-t border-line/20 pt-6 flex justify-between items-center text-[10px] font-bold text-muted/40 uppercase tracking-widest">
+         <div className="flex items-center gap-2">
+            <Shield size={12} />
+            <span>Encriptación BOCA activa</span>
+         </div>
+         <p>© 2026 BOCA Contextual Systems</p>
+      </footer>
     </AuthShell>
   );
 }

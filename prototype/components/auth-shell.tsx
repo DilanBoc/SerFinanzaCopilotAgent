@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BarChart3, ClipboardList, FileText, Headphones, LogOut, ShieldCheck } from "lucide-react";
+import { BarChart3, ClipboardList, FileText, Headphones, LogOut, Zap } from "lucide-react";
 import { allowedRoutes, routeForRole, type DemoUser } from "@/lib/auth";
 import { clearStoredUser, useDemoAuth } from "@/lib/use-demo-auth";
 
@@ -24,57 +24,65 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
 
   if (!ready || !user) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-surface text-muted">
-        Validando sesion...
+      <div className="flex min-h-screen items-center justify-center bg-onyx text-muted font-bold tracking-tighter animate-pulse">
+        BOCA IS LOADING...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-line bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <Link href={routeForRole(user.role)} className="flex items-center gap-3 font-semibold text-ink">
-            <span className="flex h-9 w-9 items-center justify-center rounded bg-brand text-white">
-              <ShieldCheck size={19} />
-            </span>
-            <span>Serfinanza Action Hub</span>
+    <div className="min-h-screen bg-onyx text-ink">
+      <header className="border-b border-line bg-midnight/80 backdrop-blur-md sticky top-0 z-50">
+        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-8 py-5">
+          <Link href={routeForRole(user.role)} className="flex items-center gap-4 group">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-brand to-electric-violet text-white shadow-lg shadow-brand/20 group-hover:scale-110 transition-transform">
+              <Zap size={24} fill="currentColor" />
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className="text-4xl font-[900] tracking-tighter text-ink bg-clip-text text-transparent bg-gradient-to-r from-white to-muted">
+                BOCA
+              </span>
+            </div>
           </Link>
-          <div className="flex items-center gap-4">
-            <nav className="flex items-center gap-1">
+          
+          <div className="flex items-center gap-8">
+            <nav className="hidden lg:flex items-center gap-2">
               {visibleNav(user).map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="flex items-center gap-2 rounded px-3 py-2 text-sm text-muted hover:bg-surface hover:text-ink"
+                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-muted transition-all hover:bg-surface hover:text-brand"
                   >
-                    <Icon size={16} />
+                    <Icon size={18} />
                     {item.label}
                   </Link>
                 );
               })}
             </nav>
-            <div className="hidden text-right text-xs text-muted md:block">
-              <p className="font-medium text-ink">{user.name}</p>
-              <p>{user.title}</p>
+            
+            <div className="flex items-center gap-6 pl-6 border-l border-line">
+              <div className="hidden text-right text-xs md:block">
+                <p className="font-black text-ink uppercase tracking-tight">{user.name}</p>
+                <p className="text-muted font-bold text-[10px] uppercase tracking-wider">{user.title}</p>
+              </div>
+              <button
+                type="button"
+                className="focus-ring group flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-midnight text-muted transition-all hover:border-danger hover:text-danger"
+                onClick={() => {
+                  clearStoredUser();
+                  router.replace("/login");
+                }}
+                aria-label="Cerrar sesion"
+              >
+                <LogOut size={18} className="group-hover:translate-x-0.5 transition-transform" />
+              </button>
             </div>
-            <button
-              type="button"
-              className="focus-ring rounded border border-line bg-white p-2 text-muted hover:bg-surface hover:text-ink"
-              onClick={() => {
-                clearStoredUser();
-                router.replace("/login");
-              }}
-              aria-label="Cerrar sesion"
-            >
-              <LogOut size={17} />
-            </button>
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-7xl px-6 py-6">{children}</main>
+      <main className="mx-auto max-w-[1600px] px-8 py-8">{children}</main>
     </div>
   );
 }

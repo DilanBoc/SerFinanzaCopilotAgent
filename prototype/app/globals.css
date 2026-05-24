@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
-  background: #f7f8fa;
-  color: #17202a;
+  color-scheme: dark;
+  background: #050505;
+  color: #FFFFFF;
 }
 
 * {
@@ -14,8 +14,8 @@
 
 body {
   margin: 0;
-  background: #f7f8fa;
-  color: #17202a;
+  background: #050505;
+  color: #FFFFFF;
 }
 
 button,
@@ -23,6 +23,7 @@ input,
 select,
 textarea {
   font: inherit;
+  color: inherit;
 }
 
 .focus-ring {
@@ -31,5 +32,20 @@ textarea {
 }
 
 .focus-ring:focus-visible {
-  outline-color: #005eb8;
+  outline-color: #0070FF;
+}
+
+/* Custom scrollbar for dark mode */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0D0D0D;
+}
+::-webkit-scrollbar-thumb {
+  background: #1E293B;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #0070FF;
 }

@@ -132,12 +132,33 @@ function seed(database: DatabaseSync) {
   const advisorCount = database.prepare("select count(*) as count from advisors").get() as { count: number };
   if (advisorCount.count > 0) return;
 
-  database
-    .prepare("insert into offices (id, name, city, region) values (?, ?, ?, ?)")
-    .run(office.id, office.name, office.city, office.region);
-  database
-    .prepare("insert into advisors (id, name, office_id, team, seniority) values (?, ?, ?, ?, ?)")
-    .run(advisor.id, advisor.name, advisor.officeId, advisor.team, advisor.seniority);
+  const offices = [
+    { id: "off_001", name: "Oficina Barranquilla Centro", city: "Barranquilla", region: "Caribe" },
+    { id: "off_002", name: "Oficina Bogota Norte", city: "Bogota", region: "Andina" },
+    { id: "off_003", name: "Oficina Cartagena Bocagrande", city: "Cartagena", region: "Caribe" },
+    { id: "off_004", name: "Oficina Medell El Poblado", city: "Medellin", region: "Andina" },
+    { id: "off_005", name: "Oficina Cali Chipichape", city: "Cali", region: "Pacifico" },
+  ];
+  const advisors = [
+    { id: "adv_001", officeId: "off_001", name: "Laura Martinez", team: "Atencion presencial", seniority: "Asesora nueva" },
+    { id: "adv_002", officeId: "off_001", name: "Camilo Ortega", team: "Atencion presencial", seniority: "Sénior" },
+    { id: "adv_003", officeId: "off_002", name: "Natalia Ruiz", team: "Ventas", seniority: "Sénior" },
+    { id: "adv_004", officeId: "off_003", name: "Pedro Suarez", team: "Servicio", seniority: "Asesor nuevo" },
+    { id: "adv_005", officeId: "off_004", name: "Elena Gomez", team: "Atencion presencial", seniority: "Sénior" },
+    { id: "adv_006", officeId: "off_005", name: "Ricardo Luna", team: "Ventas", seniority: "Sénior" },
+  ];
+
+  const officeInsert = database.prepare("insert into offices (id, name, city, region) values (?, ?, ?, ?)");
+  for (const o of offices) {
+    const exists = database.prepare("select id from offices where id = ?").get(o.id);
+    if (!exists) officeInsert.run(o.id, o.name, o.city, o.region);
+  }
+
+  const advisorInsert = database.prepare("insert into advisors (id, name, office_id, team, seniority) values (?, ?, ?, ?, ?)");
+  for (const a of advisors) {
+    const exists = database.prepare("select id from advisors where id = ?").get(a.id);
+    if (!exists) advisorInsert.run(a.id, a.name, a.officeId, a.team, a.seniority);
+  }
   const customerInsert = database.prepare(
     `insert into customers_dummy
      (id, document_id, name, segment, active_products, preferred_channel, customer_since, commercial_propensity, risk_alerts, simulated_score, simulated_eligibility, last_interaction, recent_requests, soft_insights)
@@ -196,12 +217,16 @@ function seedOperationalHistory(database: DatabaseSync) {
     { id: "off_001", name: "Oficina Barranquilla Centro" },
     { id: "off_002", name: "Oficina Bogota Norte" },
     { id: "off_003", name: "Oficina Cartagena Bocagrande" },
+    { id: "off_004", name: "Oficina Medell El Poblado" },
+    { id: "off_005", name: "Oficina Cali Chipichape" },
   ];
   const advisors = [
-    { id: "adv_001", officeId: "off_001", name: "Laura Martinez" },
-    { id: "adv_002", officeId: "off_001", name: "Camilo Ortega" },
-    { id: "adv_003", officeId: "off_002", name: "Natalia Ruiz" },
-    { id: "adv_004", officeId: "off_003", name: "Pedro Suarez" },
+    { id: "adv_001", name: "Laura Martinez" },
+    { id: "adv_002", name: "Camilo Ortega" },
+    { id: "adv_003", name: "Natalia Ruiz" },
+    { id: "adv_004", name: "Pedro Suarez" },
+    { id: "adv_005", name: "Elena Gomez" },
+    { id: "adv_006", name: "Ricardo Luna" },
   ];
   const topics = [
     { intent: "ACTUALIZACION_DATOS", topic: "Actualizacion de datos", product: "Datos cliente", weight: 4 },

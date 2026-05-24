@@ -38,6 +38,9 @@ export const customers: CustomerProfile[] = [
       "Cliente usa WhatsApp como canal preferido; conviene entregar pasos resumidos.",
       "Tiene tarjeta activa y ha preguntado por CDT, oportunidad de orientacion sin recomendacion definitiva.",
       "Si solicita cambio de ingresos, validar soporte antes de confirmar el tramite.",
+      "Oportunidad Cross-Sell: Ofrecer seguro de protección de compras vinculado a tarjeta.",
+      "Alerta de Comportamiento: Ha consultado extractos 3 veces este mes, posible interés en control de gastos.",
+      "Fidelización: Cumple aniversario como cliente en 2 meses, sugerir revisión de beneficios de segmento.",
     ],
   },
   {
@@ -58,6 +61,9 @@ export const customers: CustomerProfile[] = [
       "Priorizar claridad y confirmacion paso a paso.",
       "Puede requerir apoyo para migrar consultas simples a canales digitales.",
       "Evitar lenguaje tecnico sobre rentabilidad; ofrecer simulacion formal.",
+      "Servicio Prioritario: Cliente prefiere contacto humano; agendar citas para trámites complejos.",
+      "Educación Digital: Mostrarle el portal de pensionados para descarga de certificados.",
+      "Retención: Próximo vencimiento de CDT, preparar oferta de renovación competitiva.",
     ],
   },
   {
@@ -78,6 +84,9 @@ export const customers: CustomerProfile[] = [
       "Tiene friccion reciente con app; verificar si puede operar por canal digital.",
       "Si pregunta por ingresos, validar soportes para independiente.",
       "Puede beneficiarse de guia de pagos y extractos.",
+      "Financiación: Interés en compras diferidas, ofrecer simulación de cuotas en oficina.",
+      "Crecimiento: Segmento independiente con buen score, evaluar aumento de cupo.",
+      "Digitalización: Enviar tutorial interactivo de recuperación de clave por correo.",
     ],
   },
 ];
