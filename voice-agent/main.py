@@ -17,7 +17,7 @@ from faster_whisper import WhisperModel
 
 SAMPLE_RATE = int(os.getenv("VOICE_SAMPLE_RATE", "16000"))
 CHUNK_SECONDS = float(os.getenv("VOICE_CHUNK_SECONDS", "4"))
-MODEL_SIZE = os.getenv("WHISPER_MODEL_SIZE", "medium")
+MODEL_SIZE = os.getenv("WHISPER_MODEL_SIZE", "small")
 MODEL_DEVICE = os.getenv("WHISPER_DEVICE", "cpu")
 COMPUTE_TYPE = os.getenv("WHISPER_COMPUTE_TYPE", "int8")
 HOST = os.getenv("VOICE_AGENT_HOST", "127.0.0.1")
