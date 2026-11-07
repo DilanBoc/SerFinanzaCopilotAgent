@@ -113,7 +113,7 @@ Mensaje para jurados:
 
 > La mayoria de soluciones de IA empiezan preguntando como automatizar al cliente. Nosotros empezamos por aumentar la capacidad del asesor, porque ahi se decide la calidad de la experiencia y la consistencia operativa.
 
-## 6. La Solucion
+## 7. La Solucion
 
 Serfinanza Action Hub es un copiloto contextual para atencion presencial.
 
@@ -132,9 +132,9 @@ La promesa no es que la IA reemplace al asesor.
 
 La promesa es que el asesor no tenga que depender solo de memoria, PDFs o improvisacion cuando esta frente al cliente.
 
-## 7. Como Hicimos La Solucion
+## 8. Como Hicimos La Solucion
 
-### 7.1 Puesto Del Asesor
+### 8.1 Puesto Del Asesor
 
 La vista principal permite demostrar la atencion presencial:
 
@@ -149,7 +149,7 @@ La vista principal permite demostrar la atencion presencial:
 - tarjeta con `Ver asistencia` y `Cerrar`;
 - acciones posteriores: `Resuelto`, `Escalar`, `Brecha`.
 
-### 7.2 Respuesta Estructurada
+### 8.2 Respuesta Estructurada
 
 La respuesta no es un parrafo libre. Esta organizada para que el asesor pueda actuar:
 
@@ -164,7 +164,7 @@ La respuesta no es un parrafo libre. Esta organizada para que el asesor pueda ac
 
 Esto es importante porque en banca no basta con sonar bien. La respuesta debe ser trazable, accionable y prudente.
 
-### 7.3 Brechas De Conocimiento
+### 8.3 Brechas De Conocimiento
 
 Cuando la fuente no alcanza o el caso requiere validacion, el asesor puede reportar una brecha.
 
@@ -180,7 +180,7 @@ Esa brecha queda disponible para administracion con:
 
 Este punto diferencia el producto: el sistema no finge saberlo todo. Cuando no tiene base suficiente, escala y aprende.
 
-### 7.4 Dashboard De Calidad
+### 8.4 Dashboard De Calidad
 
 El panel de calidad convierte clics operativos en inteligencia:
 
@@ -193,7 +193,7 @@ El panel de calidad convierte clics operativos en inteligencia:
 
 No medimos solo volumen de interacciones. Medimos friccion operativa.
 
-### 7.5 Reporte Marketing
+### 8.5 Reporte Marketing
 
 Marketing recibe evidencia agregada, no transcripciones completas.
 
@@ -207,7 +207,7 @@ El sistema identifica:
 
 Asi, una pregunta repetida en oficina puede convertirse en una mejora de contenido, una respuesta mas clara o una oportunidad de adquisicion digital.
 
-### 7.6 Arquitectura Del MVP
+### 8.6 Arquitectura Del MVP
 
 El prototipo esta construido para estabilidad de demo:
 
@@ -221,7 +221,7 @@ El prototipo esta construido para estabilidad de demo:
 
 Decision honesta: el modo de microfono local es experimental. La demo principal debe conservar el modo simulado para evitar que ruido, permisos o latencia rompan la presentacion.
 
-## 8. Escenarios De Demo
+## 9. Escenarios De Demo
 
 ### Escenario 1: Actualizacion De Datos
 
@@ -270,7 +270,7 @@ Valor demostrado:
 - registra el vacio;
 - alimenta administrador, calidad y marketing.
 
-## 9. Impacto Esperado
+## 10. Impacto Esperado
 
 Para asesores:
 
@@ -299,7 +299,7 @@ Para marketing:
 - briefs revisables;
 - conexion entre preguntas frecuentes y adquisicion digital.
 
-## 10. Lo Que No Estamos Prometiendo
+## 11. Lo Que No Estamos Prometiendo
 
 Esta parte conviene decirla con seguridad, porque muestra madurez:
 
@@ -312,7 +312,7 @@ Esta parte conviene decirla con seguridad, porque muestra madurez:
 
 El MVP demuestra una base mas importante: conocimiento aprobado convertido en accion segura, explicable y trazable.
 
-## 11. Cierre Con Vision Agentica
+## 12. Cierre Con Vision Agentica
 
 El contexto de pagos con IA muestra hacia donde se mueve la industria: los agentes ya no solo responden; empiezan a iniciar, autenticar y completar acciones en nombre de usuarios.
 
@@ -335,7 +335,7 @@ Cierre recomendado para la ultima diapositiva:
 
 > Serfinanza Action Hub convierte cada atencion presencial en tres resultados: un asesor mejor preparado, un cliente mejor orientado y un banco que aprende de sus propias conversaciones.
 
-## 12. Estructura Recomendada De Presentacion
+## 13. Estructura Recomendada De Presentacion
 
 ### Slide 1 - Titulo
 
@@ -357,7 +357,7 @@ Mostrar dolores:
 
 ### Slide 3 - Evidencia De Mercado
 
-Completar con datos reales del deep research cuando el archivo tenga contenido.
+Mostrar 3 datos: rotacion alta, capacitacion insuficiente y costo/riesgo de mala asesoria.
 
 Mensaje: rotacion, onboarding y complejidad operativa hacen insuficiente la capacitacion tradicional.
 
@@ -408,3 +408,4 @@ Mensaje: prototipo local estable, trazable y demostrable.
 Usar frase final:
 
 > Convertimos cada atencion presencial en un asesor mejor preparado, un cliente mejor orientado y un banco que aprende.
+

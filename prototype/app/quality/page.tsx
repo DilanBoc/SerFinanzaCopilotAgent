@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { BarChart3, Filter, GraduationCap, MapPin, Users, Globe } from "lucide-react";
-import { Badge, Metric, Panel } from "@/components/ui";
+import { ActionButton, Badge, Metric, Panel } from "@/components/ui";
 import { AuthShell } from "@/components/auth-shell";
 
 type Dashboard = {

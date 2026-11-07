@@ -35,16 +35,20 @@ export function Metric({ label, value, detail }: { label: string; value: string 
 
 export function ActionButton({
   children,
+  className = "",
   onClick,
   variant = "primary",
   disabled,
+  title,
   type = "button",
   size = "md"
 }: {
   children: ReactNode;
+  className?: string;
   onClick?: () => void;
   variant?: "primary" | "secondary" | "danger" | "neon";
   disabled?: boolean;
+  title?: string;
   type?: "button" | "submit";
   size?: "sm" | "md" | "lg";
 }) {
@@ -66,7 +70,8 @@ export function ActionButton({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`focus-ring rounded-lg font-bold transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-30 ${variants[variant]} ${sizes[size]}`}
+      title={title}
+      className={`focus-ring rounded-lg font-bold transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-30 ${variants[variant]} ${sizes[size]} ${className}`}
     >
       {children}
     </button>
